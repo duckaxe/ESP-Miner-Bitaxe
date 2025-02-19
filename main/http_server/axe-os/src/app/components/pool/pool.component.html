@@ -17,6 +17,7 @@
                         <input pInputText [id]="pool + 'Port'" [formControlName]="pool + 'Port'" type="number" />
                     </div>
                 </div>
+
                 <div class="field grid p-fluid">
                     <label [htmlFor]="pool + 'User'" class="col-12 md:col-2 md:mb-0">User</label>
                     <div class="col-12 md:col-10">
@@ -66,6 +67,49 @@
                             />
                         </label>
                     </div>
+
+                    <div *ngIf="showAdvancedOptions[pool]"  class="field grid p-fluid">
+                        <label [htmlFor]="pool + 'TLS'" class="col-12 mb-2 md:col-2 md:mb-0">Stratum TLS</label>
+                        <div class="col-12 md:col-10">
+                            <div class="flex flex-wrap gap-3">
+                                <div class="field-radiobutton mb-0">
+                                    <p-radioButton [name]="pool + 'TLS'" [value]="0" [formControlName]="pool + 'TLS'" [inputId]="pool + 'TLS_0'"></p-radioButton>
+                                    <label [for]="pool + 'TLS_0'" class="ml-2">Disable</label>
+                                </div>
+                                <div class="field-radiobutton mb-0">
+                                    <p-radioButton [name]="pool + 'TLS'" [value]="1" [formControlName]="pool + 'TLS'" [inputId]="pool + 'TLS_1'"></p-radioButton>
+                                    <label [for]="pool + 'TLS_1'" class="ml-2">Bundled CA</label>
+                                </div>
+                                <div class="field-radiobutton mb-0">
+                                    <p-radioButton [name]="pool + 'TLS'" [value]="2" [formControlName]="pool + 'TLS'" [inputId]="pool + 'TLS_2'"></p-radioButton>
+                                    <label [for]="pool + 'TLS_2'" class="ml-2">Custom CA</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="showAdvancedOptions[pool] && form.get(pool + 'TLS')?.value === 2" class="field grid p-fluid">
+                        <label [htmlFor]="pool + 'Cert'" class="col-12 mb-2 md:col-2 md:mb-0">Stratum Certificate:</label>
+                        <div class="col-12 md:col-10">
+                            <div class="p-inputgroup">
+                                <textarea pInputTextarea [id]="pool + 'Cert'" [formControlName]="pool + 'Cert'" rows="5"
+                                    placeholder="Enter SSL/TLS certificate or choose a certificate file" 
+                                    style="font-family: monospace;"></textarea>
+                                <span class="p-inputgroup-addon">
+                                    <button pButton type="button" icon="pi pi-upload" class="p-button-secondary" 
+                                        (click)="certFileInput.click()"></button>
+                                    <input #certFileInput type="file" (change)="onCertFileSelected($event, pool + 'Cert')" 
+                                        style="display:none" accept=".pem,.crt,.cer">
+                                </span>
+                            </div>
+                            <small>Enter or <a href="#" (click)="$event.preventDefault(); certFileInput.click()">choose a certificate file</a> (.pem, .crt, .cer)</small>
+                            <div>
+                                <small class="p-error" *ngIf="form.get(pool + 'Cert')?.errors?.['invalidCertificate']">
+                                    Please enter a valid SSL/TLS certificate
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
                 </fieldset>
             </div>
         </ng-container>

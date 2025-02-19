@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LoadingService } from 'src/app/services/loading.service';
 import { SystemService } from 'src/app/services/system.service';
@@ -50,7 +50,8 @@ export class PoolComponent implements OnInit {
           stratumSuggestedDifficulty: [info.stratumSuggestedDifficulty, [Validators.required]],
           stratumUser: [info.stratumUser, [Validators.required]],
           stratumPassword: ['*****', [Validators.required]],
-
+          stratumTLS: [info.stratumTLS == 1],
+          stratumCert: [info.stratumCert],
           fallbackStratumURL: [info.fallbackStratumURL, [
             Validators.pattern(/^(?!.*stratum\+tcp:\/\/)(?!.*:[1-9]\d{0,4}$).*$/),
           ]],
@@ -62,9 +63,43 @@ export class PoolComponent implements OnInit {
           ]],
           fallbackStratumExtranonceSubscribe: [info.fallbackStratumExtranonceSubscribe == 1, [Validators.required]],
           fallbackStratumSuggestedDifficulty: [info.fallbackStratumSuggestedDifficulty, [Validators.required]],
+          fallbackStratumTLS: [info.fallbackStratumTLS == 1],
+          fallbackStratumCert: [info.fallbackStratumCert],
           fallbackStratumUser: [info.fallbackStratumUser, [Validators.required]],
           fallbackStratumPassword: ['*****', [Validators.required]]
         });
+
+        // Add conditional validation for primary stratumCert
+        this.form.get('stratumTLS')?.valueChanges.subscribe(useTLS => {
+          const certControl = this.form.get('stratumCert');
+          if (useTLS) {
+            certControl?.setValidators([
+              Validators.required,
+              this.pemCertificateValidator()
+            ]);
+          } else {
+            certControl?.clearValidators();
+          }
+          certControl?.updateValueAndValidity();
+        });
+
+        // Add conditional validation for fallback stratumCert
+        this.form.get('fallbackStratumTLS')?.valueChanges.subscribe(useTLS => {
+          const certControl = this.form.get('fallbackStratumCert');
+          if (useTLS) {
+            certControl?.setValidators([
+              Validators.required,
+              this.pemCertificateValidator()
+            ]);
+          } else {
+            certControl?.clearValidators();
+          }
+          certControl?.updateValueAndValidity();
+        });
+
+        // Trigger initial validation
+        this.form.get('stratumTLS')?.updateValueAndValidity();
+        this.form.get('fallbackStratumTLS')?.updateValueAndValidity();
       });
   }
 
@@ -139,5 +174,14 @@ export class PoolComponent implements OnInit {
       portControl.setValue(port);
     }
     urlControl.setValue(cleanUrl);
+  }
+
+  private pemCertificateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value?.trim()) return null;
+      
+      const pemRegex = /^-----BEGIN CERTIFICATE-----\s*([\s\S]*?)\s*-----END CERTIFICATE-----$/;
+      return pemRegex.test(control.value?.trim()) ? null : { invalidCertificate: true };
+    };
   }
 }
