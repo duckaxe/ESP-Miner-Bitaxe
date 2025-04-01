@@ -58,6 +58,19 @@ static bool is_scanning = false;
 static uint16_t ap_number = 0;
 static wifi_ap_record_t ap_info[MAX_AP_COUNT];
 
+bool is_client_connected_to_ap() {
+    wifi_sta_list_t sta_list;
+    esp_err_t err = esp_wifi_ap_get_sta_list(&sta_list);
+
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to get station list (error: %d)", err);
+        return false;
+    }
+
+    ESP_LOGD(TAG, "Found %d clients connected", sta_list.num);
+
+    return sta_list.num > 0;
+}
 
 esp_err_t get_wifi_current_rssi(int8_t *rssi)
 {
@@ -165,6 +178,13 @@ static void event_handler(void * arg, esp_event_base_t event_base, int32_t event
             }
 
             ESP_LOGI(TAG, "Could not connect to '%s' [rssi %d]: reason %d", event->ssid, event->rssi, event->reason);
+
+            wifi_mode_t mode = WIFI_MODE_NULL;
+            ESP_ERROR_CHECK(esp_wifi_get_mode(&mode));
+            if (mode == WIFI_MODE_APSTA && is_client_connected_to_ap() == true) {
+                ESP_LOGI(TAG, "Client connected to AP, not retrying...");
+                return;
+            }
 
             // Wait a little
             esp_wifi_connect();
@@ -320,7 +340,6 @@ void wifi_init(const char * wifi_ssid, const char * wifi_pass, const char * host
     /* Initialize AP */
     ESP_LOGI(TAG, "ESP_WIFI Access Point On");
     wifi_init_softap();
-
 
     /* Skip connection if SSID is null */
     if (strlen(wifi_ssid) == 0) {
