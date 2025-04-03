@@ -58,20 +58,6 @@ static bool is_scanning = false;
 static uint16_t ap_number = 0;
 static wifi_ap_record_t ap_info[MAX_AP_COUNT];
 
-bool is_client_connected_to_ap() {
-    wifi_sta_list_t sta_list;
-    esp_err_t err = esp_wifi_ap_get_sta_list(&sta_list);
-
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to get station list (error: %d)", err);
-        return false;
-    }
-
-    ESP_LOGD(TAG, "Found %d clients connected", sta_list.num);
-
-    return sta_list.num > 0;
-}
-
 esp_err_t get_wifi_current_rssi(int8_t *rssi)
 {
     wifi_ap_record_t current_ap_info;
@@ -146,6 +132,7 @@ esp_err_t wifi_scan(wifi_ap_record_simple_t *ap_records, uint16_t *ap_count)
 }
 
 static int s_retry_num = 0;
+static int clients_connected_to_ap = 0;
 
 static char * _ip_addr_str;
 
@@ -179,10 +166,8 @@ static void event_handler(void * arg, esp_event_base_t event_base, int32_t event
 
             ESP_LOGI(TAG, "Could not connect to '%s' [rssi %d]: reason %d", event->ssid, event->rssi, event->reason);
 
-            wifi_mode_t mode = WIFI_MODE_NULL;
-            ESP_ERROR_CHECK(esp_wifi_get_mode(&mode));
-            if (mode == WIFI_MODE_APSTA && is_client_connected_to_ap() == true) {
-                ESP_LOGI(TAG, "Client connected to AP, not retrying...");
+            if (clients_connected_to_ap > 0) {
+                ESP_LOGI(TAG, "Client(s) connected to AP, not retrying...");
                 return;
             }
 
@@ -192,6 +177,10 @@ static void event_handler(void * arg, esp_event_base_t event_base, int32_t event
             ESP_LOGI(TAG, "Retrying Wi-Fi connection...");
             MINER_set_wifi_status(WIFI_RETRYING, s_retry_num, event->reason);
             vTaskDelay(5000 / portTICK_PERIOD_MS);
+        } else if (event_id == WIFI_EVENT_AP_STACONNECTED) {
+            clients_connected_to_ap += 1;
+        } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
+            clients_connected_to_ap -= 1;
         }
     }
 
