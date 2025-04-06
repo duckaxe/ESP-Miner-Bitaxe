@@ -68,6 +68,8 @@ typedef struct
     bool use_fallback_stratum;
     uint16_t pool_is_tls;
     uint16_t fallback_pool_is_tls;
+    uint16_t pool_tls;
+    uint16_t fallback_pool_tls;
     char * pool_cert;
     char * fallback_pool_cert;
     bool is_using_fallback;
