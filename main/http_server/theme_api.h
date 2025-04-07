@@ -28,7 +28,8 @@
         "\"--togglebutton-text-color\":\"#ffffff\", "\
         "\"--radiobutton-border\":\"#F80421\", "\
         "\"--radiobutton-bg\":\"#F80421\", "\
-        "\"--radiobutton-hover-border\":\"#df031d\" "\
+        "\"--radiobutton-hover-border\":\"#df031d\", "\
+        "\"--radiobutton-focus-shadow\":\"#df031d\" "\
         "}"
 
 // Register theme API endpoints
