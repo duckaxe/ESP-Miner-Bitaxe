@@ -297,8 +297,11 @@ export class HomeComponent {
       this.titleService.setTitle(
         [
           this.pageDefaultTitle,
+          info.hostname,
           (info.hashRate ? HashSuffixPipe.transform(info.hashRate * 1000000000) : false),
-          (info.temp ? `${info.temp} °C` : false)
+          (info.temp ? `${info.temp}${info.vrTemp ? `/${info.vrTemp}` : ''} °C` : false),
+          (info.power ? `${info.power.toFixed()} W` : false),
+          (info.bestDiff ? info.bestDiff : false),
         ].filter(Boolean).join(' • ')
       );
     });
