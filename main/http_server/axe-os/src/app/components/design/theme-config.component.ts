@@ -14,7 +14,6 @@ interface ThemeOption {
   selector: 'app-theme-config',
   template: `
     <div class="card">
-      <h5>Theme Configuration</h5>
       <div class="grid">
         <div class="col-12">
           <h6>Color Scheme</h6>
@@ -255,8 +254,8 @@ export class ThemeConfigComponent implements OnInit {
     config.colorScheme = scheme;
     this.layoutService.config.set(config);
     // Save color scheme to NVS
-    this.themeService.saveThemeSettings({ 
-      colorScheme: scheme 
+    this.themeService.saveThemeSettings({
+      colorScheme: scheme
     }).subscribe(
       () => { },
       error => console.error('Error saving theme settings:', error)
