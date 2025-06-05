@@ -1,8 +1,7 @@
-import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
-import { Component, ViewChild } from '@angular/core';
+import { HttpErrorResponse, HttpEventType, HttpClient, HttpResponse } from '@angular/common/http';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { FileUploadHandlerEvent, FileUpload } from 'primeng/fileupload';
 import { map, Observable, shareReplay, startWith } from 'rxjs';
 import { GithubUpdateService } from 'src/app/services/github-update.service';
 import { LoadingService } from 'src/app/services/loading.service';
@@ -30,71 +29,73 @@ export class SettingsComponent {
 
   public info$: Observable<any>;
 
-  @ViewChild('firmwareUpload') firmwareUpload!: FileUpload;
-  @ViewChild('websiteUpload') websiteUpload!: FileUpload;
-
   constructor(
     private fb: FormBuilder,
     private systemService: SystemService,
     private toastr: ToastrService,
     private toastrService: ToastrService,
     private loadingService: LoadingService,
-    private githubUpdateService: GithubUpdateService
+    private githubUpdateService: GithubUpdateService,
+    private http: HttpClient,
   ) {
-
-
-
     this.latestRelease$ = this.githubUpdateService.getReleases().pipe(map(releases => {
       return releases[0];
     }));
 
     this.info$ = this.systemService.getInfo().pipe(shareReplay({refCount: true, bufferSize: 1}))
-
-
-      this.info$.pipe(this.loadingService.lockUIUntilComplete())
-      .subscribe(info => {
-        this.ASICModel = info.ASICModel;
-        this.form = this.fb.group({
-          display: [info.display, [Validators.required]],
-          flipscreen: [info.flipscreen == 1],
-          invertscreen: [info.invertscreen == 1],
-          displayTimeout: [info.displayTimeout, [Validators.required]],
-          stratumURL: [info.stratumURL, [
-            Validators.required,
-            Validators.pattern(/^(?!.*stratum\+tcp:\/\/).*$/),
-            Validators.pattern(/^[^:]*$/),
-          ]],
-          stratumPort: [info.stratumPort, [
-            Validators.required,
-            Validators.pattern(/^[^:]*$/),
-            Validators.min(0),
-            Validators.max(65535)
-          ]],
-          stratumUser: [info.stratumUser, [Validators.required]],
-          stratumPassword: ['*****', [Validators.required]],
-          coreVoltage: [info.coreVoltage, [Validators.required]],
-          frequency: [info.frequency, [Validators.required]],
-          autofanspeed: [info.autofanspeed == 1, [Validators.required]],
-          temptarget: [info.temptarget, [Validators.required]],
-          fanspeed: [info.fanspeed, [Validators.required]],
-        });
-
-        this.form.controls['autofanspeed'].valueChanges.pipe(
-          startWith(this.form.controls['autofanspeed'].value)
-        ).subscribe(autofanspeed => {
-          if (autofanspeed) {
-            this.form.controls['fanspeed'].disable();
-            this.form.controls['temptarget'].enable();
-          } else {
-            this.form.controls['fanspeed'].enable();
-            this.form.controls['temptarget'].disable();
-          }
-        });
-      });
-
   }
-  public updateSystem() {
 
+  public isUpdateAvailable(deviceVersion: string, releaseName: string) {
+    return this.checkVersion(releaseName.substring(1), deviceVersion) === 1;
+  }
+
+  // https://codereview.stackexchange.com/a/236656
+  private checkVersion(a: string, b: string): 1 | -1 | 0 {
+    const x = a.split('.').map(e => parseInt(e, 10));
+    const y = b.split('.').map(e => parseInt(e, 10));
+
+    for (const i in x) {
+      y[i] = y[i] || 0;
+
+      if (x[i] === y[i]) {
+        continue;
+      } else if (x[i] > y[i]) {
+        return 1;
+      } else {
+        return -1;
+      }
+    }
+
+    return y.length > x.length ? -1 : 0;
+  }
+
+  public otaAutoUpdate(assets: any) {
+    const espBinAsset = assets.filter((x: any) => x.name === 'esp-miner.bin');
+    const wwwBinAsset = assets.filter((x: any) => x.name === 'www.bin');
+
+    if (!espBinAsset.length) {
+      this.toastrService.error('No esp-miner.bin file found', 'Error');
+      return;
+    }
+
+    if (!wwwBinAsset.length) {
+      this.toastrService.error('No www.bin file found', 'Error');
+      return;
+    }
+
+    const espBinUrl = espBinAsset[0].browser_download_url;
+    const wwwBinUrl = wwwBinAsset[0].browser_download_url;
+
+    this.http.get(
+      'https://corsproxy.io/?url=' + wwwBinUrl, { responseType: 'blob', observe: 'response'}
+    ).subscribe((response: HttpResponse<Blob>) => {
+      // For test purposes only otaWWWUpdate
+      this.otaWWWUpdate(response.body as Blob);
+      // ... otaUpdate
+    });
+  }
+
+  public updateSystem() {
     const form = this.form.getRawValue();
 
     form.frequency = parseInt(form.frequency);
@@ -121,15 +122,7 @@ export class SettingsComponent {
       });
   }
 
-  otaUpdate(event: FileUploadHandlerEvent) {
-    const file = event.files[0];
-    this.firmwareUpload.clear(); // clear the file upload component
-
-    if (file.name != 'esp-miner.bin') {
-      this.toastrService.error('Incorrect file, looking for esp-miner.bin.', 'Error');
-      return;
-    }
-
+  otaUpdate(file: Blob) {
     this.systemService.performOTAUpdate(file)
       .pipe(this.loadingService.lockUIUntilComplete())
       .subscribe({
@@ -158,15 +151,7 @@ export class SettingsComponent {
       });
   }
 
-  otaWWWUpdate(event: FileUploadHandlerEvent) {
-    const file = event.files[0];
-    this.websiteUpload.clear(); // clear the file upload component
-
-    if (file.name != 'www.bin') {
-      this.toastrService.error('Incorrect file, looking for www.bin.', 'Error');
-      return;
-    }
-
+  otaWWWUpdate(file: Blob) {
     this.systemService.performWWWOTAUpdate(file)
       .pipe(
         this.loadingService.lockUIUntilComplete(),
