@@ -32,6 +32,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Network', icon: 'pi pi-fw pi-wifi', routerLink: ['network'] },
                     { label: 'Theme', icon: 'pi pi-fw pi-palette', routerLink: ['design'] },
                     { label: 'Settings', icon: 'pi pi-fw pi-cog', routerLink: ['settings'] },
+                    { label: 'Update', icon: 'pi pi-fw pi-sync', routerLink: ['update'] },
                     { separator: true },
 
                     { label: 'Whitepaper', icon: 'pi pi-fw pi-bitcoin', command: () => window.open('/bitcoin.pdf', '_blank') },
