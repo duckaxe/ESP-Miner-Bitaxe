@@ -4,12 +4,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { LogsComponent } from './components/logs/logs.component';
 import { SystemComponent } from './components/system/system.component';
+import { UpdateComponent } from './components/update/update.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { NetworkComponent } from './components/network/network.component';
 import { SwarmComponent } from './components/swarm/swarm.component';
 import { DesignComponent } from './components/design/design.component';
 import { PoolComponent } from './components/pool/pool.component';
-import { UpdateComponent } from './components/update/update.component';
 import { AppLayoutComponent } from './layout/app.layout.component';
 import { ApModeGuard } from './guards/ap-mode.guard';
 
