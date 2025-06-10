@@ -92,7 +92,7 @@ export class HomeComponent {
     this.chartData = { ...this.chartData };
   }
 
-  
+
 
   private initializeChart() {
     const documentStyle = getComputedStyle(document.documentElement);
@@ -295,7 +295,7 @@ export class HomeComponent {
           info.hostname,
           (info.hashRate ? HashSuffixPipe.transform(info.hashRate * 1000000000) : false),
           (info.temp ? `${info.temp}${info.vrTemp ? `/${info.vrTemp}` : ''} °C` : false),
-          (info.power ? `${info.power.toFixed()} W` : false),
+          (!info.power_fault ? `${info.power} W` : false),
           (info.bestDiff ? info.bestDiff : false),
         ].filter(Boolean).join(' • ')
       );
