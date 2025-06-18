@@ -16,7 +16,7 @@ function processDirectory(dirPath) {
                 if (stats.isDirectory()) {
                     // If it's a directory, process it recursively
                     processDirectory(filePath);
-                } else if (!file.endsWith('.gz')) {
+                } else if (!['.gz', '.woff2'].some(ext => file.endsWith(ext))) {
                     // If it's a file and doesn't end with .gz, unlink it
                     fs.unlink(filePath, (err) => {
                         if (err) throw err;
