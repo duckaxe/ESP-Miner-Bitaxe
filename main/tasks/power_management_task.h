@@ -11,6 +11,7 @@ typedef struct
     float chip_temp_avg;
     float vr_temp;
     float voltage;
+    float core_voltage;
     float frequency_value;
     float power;
     float current;

@@ -180,6 +180,7 @@ void POWER_MANAGEMENT_task(void * pvParameters)
             ESP_LOGI(TAG, "setting new vcore voltage to %fmV", core_voltage);
             VCORE_set_voltage(GLOBAL_STATE, (double) core_voltage / 1000.0);
             last_core_voltage = core_voltage;
+            power_management->core_voltage = core_voltage;
         }
 
         if (asic_frequency != last_asic_frequency) {

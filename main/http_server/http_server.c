@@ -616,7 +616,7 @@ static esp_err_t GET_system_info(httpd_req_t * req)
     char * stratumUser = nvs_config_get_string(NVS_CONFIG_STRATUM_USER, CONFIG_STRATUM_USER);
     char * fallbackStratumUser = nvs_config_get_string(NVS_CONFIG_FALLBACK_STRATUM_USER, CONFIG_FALLBACK_STRATUM_USER);
     char * display = nvs_config_get_string(NVS_CONFIG_DISPLAY, "SSD1306 (128x32)");
-    uint16_t frequency = nvs_config_get_u16(NVS_CONFIG_ASIC_FREQ, CONFIG_ASIC_FREQUENCY);
+    uint16_t frequency = GLOBAL_STATE->POWER_MANAGEMENT_MODULE.frequency_value;
     float expected_hashrate = frequency * GLOBAL_STATE->DEVICE_CONFIG.family.asic.small_core_count * GLOBAL_STATE->DEVICE_CONFIG.family.asic_count / 1000.0;
 
     uint8_t mac[6];
@@ -646,7 +646,7 @@ static esp_err_t GET_system_info(httpd_req_t * req)
     cJSON_AddNumberToObject(root, "isPSRAMAvailable", GLOBAL_STATE->psram_is_available);
 
     cJSON_AddNumberToObject(root, "freeHeap", esp_get_free_heap_size());
-    cJSON_AddNumberToObject(root, "coreVoltage", nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE, CONFIG_ASIC_VOLTAGE));
+    cJSON_AddNumberToObject(root, "coreVoltage",  GLOBAL_STATE->POWER_MANAGEMENT_MODULE.core_voltage);
     cJSON_AddNumberToObject(root, "coreVoltageActual", VCORE_get_voltage_mv(GLOBAL_STATE));
     cJSON_AddNumberToObject(root, "frequency", frequency);
     cJSON_AddStringToObject(root, "ssid", ssid);
@@ -731,13 +731,13 @@ int create_json_statistics_all(cJSON * root)
 
     if (root) {
         // create array for all statistics
-        const char *label[12] = {
+        const char *label[14] = {
             "hashRate", "temp", "vrTemp", "power", "voltage",
             "current", "coreVoltageActual", "fanspeed", "fanrpm",
-            "wifiRSSI", "freeHeap", "timestamp"
+            "wifiRSSI", "freeHeap", "timestamp", "frequency", "core_voltage"
         };
 
-        cJSON * statsLabelArray = cJSON_CreateStringArray(label, 12);
+        cJSON * statsLabelArray = cJSON_CreateStringArray(label, 14);
         cJSON_AddItemToObject(root, "labels", statsLabelArray);
         prebuffer++;
 
@@ -763,6 +763,8 @@ int create_json_statistics_all(cJSON * root)
                 cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.wifiRSSI));
                 cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.freeHeap));
                 cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.timestamp));
+                cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.frequency));
+                cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.core_voltage));
 
                 cJSON_AddItemToArray(statsArray, valueArray);
                 prebuffer++;
@@ -793,6 +795,8 @@ int create_json_statistics_dashboard(cJSON * root)
                 cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.chipTemperature));
                 cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.power));
                 cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.timestamp));
+                cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.frequency));
+                cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.voltage));
 
                 cJSON_AddItemToArray(statsArray, valueArray);
                 prebuffer++;
