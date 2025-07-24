@@ -21,7 +21,7 @@
 #define OPERATION_OFF 0x00
 #define OPERATION_ON  0x80
 
-#define TPS546_INIT_PHASE 0x00  /* phase */
+#define TPS546_INIT_PHASE 0xFF  /* default phase register value from TPS546 datasheet */
 
 #define TPS546_INIT_FREQUENCY 650  /* KHz */
 
@@ -183,7 +183,7 @@ esp_err_t TPS546_set_vout(float volts);
 void TPS546_show_voltage_settings(void);
 void TPS546_print_status(void);
 
-esp_err_t TPS546_check_status(GlobalState * global_state);
+esp_err_t TPS546_check_status(GlobalState * GLOBAL_STATE);
 esp_err_t TPS546_clear_faults(void);
 
 const char* TPS546_get_error_message(void); //Get the current TPS error message

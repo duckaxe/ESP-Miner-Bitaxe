@@ -89,7 +89,6 @@ components:
       required:
         - ASICModel
         - apEnabled
-        - asicCount
         - autofanspeed
         - bestDiff
         - bestSessionDiff
@@ -97,13 +96,15 @@ components:
         - coreVoltage
         - coreVoltageActual
         - current
+        - fallbackStratumExtranonceSubscribe
         - fallbackStratumPort
+        - fallbackStratumSuggestedDifficulty
         - fallbackStratumURL
         - fallbackStratumUser
         - fanrpm
         - fanspeed
         - temptarget
-        - flipscreen
+        - rotation
         - freeHeap
         - frequency
         - hashRate
@@ -115,23 +116,28 @@ components:
         - isUsingFallbackStratum
         - macAddr
         - maxPower
+        - minimumFanSpeed
         - nominalVoltage
         - overheat_mode
         - overclockEnabled
+        - poolDifficulty
         - power
+        - power_fault
         - runningPartition
         - sharesAccepted
         - sharesRejected
         - sharesRejectedReasons
         - smallCoreCount
         - ssid
-        - stratumDiff
+        - stratumExtranonceSubscribe
         - stratumPort
+        - stratumSuggestedDifficulty
         - stratumURL
         - stratumUser
         - temp
         - uptimeSeconds
         - version
+        - axeOSVersion
         - voltage
         - vrTemp
         - wifiStatus
@@ -145,9 +151,6 @@ components:
         apEnabled:
           type: number
           description: Whether AP mode is enabled (0=no, 1=yes)
-        asicCount:
-          type: number
-          description: Number of ASICs detected
         autofanspeed:
           type: number
           description: Automatic fan speed control (0=manual, 1=auto)
@@ -169,9 +172,15 @@ components:
         current:
           type: number
           description: Current draw in milliamps
+        fallbackStratumExtranonceSubscribe:
+          type: boolean
+          description: Enable fallback pool extranonce subscription
         fallbackStratumPort:
           type: number
           description: Fallback stratum server port
+        fallbackStratumSuggestedDifficulty:
+          type: number
+          description: Fallback pool suggested difficulty
         fallbackStratumURL:
           type: string
           description: Fallback stratum server URL
@@ -187,9 +196,9 @@ components:
         temptarget:
           type: number
           description: Target Temperature for the PID Controller
-        flipscreen:
+        rotation:
           type: number
-          description: Screen flip setting (0=normal, 1=flipped)
+          description: Screen rotation setting (0, 90, 180, 270)
         freeHeap:
           type: number
           description: Available heap memory in bytes
@@ -220,6 +229,9 @@ components:
         maxPower:
           type: integer
           description: Maxmium power draw of the board in watts
+        minimumFanSpeed:
+          type: integer
+          description: Minimum fan speed percentage when using auto fan control
         nominalVoltage:
           type: integer
           description: Nominal board voltage
@@ -229,6 +241,9 @@ components:
         overclockEnabled:
           type: integer
           description: Set custom voltage/frequency in AxeOS
+        poolDifficulty:
+          type: number
+          description: Current pool difficulty
         power:
           type: number
           description: Power consumption in watts
@@ -255,12 +270,15 @@ components:
         ssid:
           type: string
           description: Connected WiFi network SSID
-        stratumDiff:
-          type: number
-          description: Current stratum difficulty
+        stratumExtranonceSubscribe:
+          type: boolean
+          description: Enable pool extranonce subscription
         stratumPort:
           type: number
           description: Primary stratum server port
+        stratumSuggestedDifficulty:
+          type: number
+          description: Pool suggested difficulty
         stratumURL:
           type: string
           description: Primary stratum server URL
@@ -276,6 +294,9 @@ components:
         version:
           type: string
           description: Firmware version
+        axeOSVersion:
+          type: string
+          description: AxeOS version
         voltage:
           type: number
           description: Input voltage
@@ -377,9 +398,9 @@ components:
           minimum: 1
           examples:
             - 450
-        flipscreen:
+        rotation:
           type: integer
-          description: Whether to flip the screen orientation (0=normal, 1=flipped)
+          description: Whether to rotate the screen orientation (0, 90, 180, 270 degrees)
           enum: [0, 1]
           examples:
             - 0
@@ -505,7 +526,9 @@ paths:
                 type: object
                 required:
                   - ASICModel
-                  - boardFamily
+                  - swarmColor
+                  - asicCount
+                  - deviceModel
                   - defaultFrequency
                   - frequencyOptions
                   - defaultVoltage
@@ -521,11 +544,19 @@ paths:
                       - BM1397
                     examples:
                       - "BM1366"
-                  boardFamily:
+                  deviceModel:
                     type: string
-                    description: Board family name
+                    description: Device model name
                     examples:
                       - "Ultra"
+                  swarmColor:
+                    type: string
+                    description: Swarm color
+                    examples:
+                      - "purple"
+                  asicCount:
+                    type: number
+                    description: Number of ASICs detected
                   defaultFrequency:
                     type: number
                     description: Default frequency for the ASIC model in MHz
