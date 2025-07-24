@@ -15,10 +15,6 @@ export class AutotuneComponent implements OnInit {
   public autotuneForm!: FormGroup;
   public autotuneInfo: any = {};
 
-  //private toastr: ToastrService;
-  //private toastrService: ToastrService;
-  //private loadingService: LoadingService;
-
 
   ngOnInit() {
     this.autotuneForm = this.fb.group({
@@ -53,8 +49,8 @@ export class AutotuneComponent implements OnInit {
     if (!this.autotuneForm.valid) return;
     this.systemService.updateAutotune(this.autotuneForm.value)
       .subscribe({
-        next: () => this.toastr.success('Autotune settings saved!', 'Success'),
-        error: (err: HttpErrorResponse) => this.toastr.error('Could not save autotune settings.', err.message)
+        next: () => this.toastr.success('Autotune settings saved!'),
+        error: (err: HttpErrorResponse) => {this.toastr.error(`Could not save autotune settings. ${err.message}`);}
       });
   }
 }

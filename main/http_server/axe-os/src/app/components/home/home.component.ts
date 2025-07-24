@@ -197,10 +197,10 @@ export class HomeComponent {
                 label += tooltipItem.raw + '°C';
               }
               if (tooltipItem.dataset.label === 'Frequency') {
-                label += tooltipItem.raw + 'mhz';
+                label += tooltipItem.raw + ' MHz';
               }
               if (tooltipItem.dataset.label === 'Voltage') {
-                label += tooltipItem.raw + 'mv';
+                label += tooltipItem.raw + ' mV';
               }
               else {
                 label += HashSuffixPipe.transform(tooltipItem.raw);
