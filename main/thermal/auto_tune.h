@@ -18,7 +18,9 @@ typedef struct
     uint8_t max_asic_temperatur;
     double frequency;
     double voltage;
-    bool auto_tune_hashrate;  // Add this line
+    bool auto_tune_hashrate;
+    double overshot_power_limit;
+    uint16_t overshot_fanspeed;
 } auto_tune_settings;
 
 extern auto_tune_settings AUTO_TUNE;

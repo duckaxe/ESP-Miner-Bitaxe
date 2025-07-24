@@ -24,6 +24,8 @@ export class AutotuneComponent implements OnInit {
       max_voltage_asic: [1400, [Validators.required, Validators.min(1)]],
       max_frequency_asic: [1000, [Validators.required, Validators.min(1)]],
       max_asic_temperatur: [65, [Validators.required, Validators.min(1)]],
+      overshot_power_limit: [0.2],  
+      overshot_fanspeed: [5]      
     });
 
     // Load autotune settings from API and patch the form if available
@@ -37,6 +39,8 @@ export class AutotuneComponent implements OnInit {
           max_voltage_asic: autotune.max_voltage_asic ?? 1400,
           max_frequency_asic: autotune.max_frequency_asic ?? 1000,
           max_asic_temperatur: autotune.max_asic_temperatur ?? 65,
+          overshot_power_limit: autotune.overshot_power_limit ?? 0.2,
+          overshot_fanspeed: autotune.overshot_fanspeed ?? 5,
         });
       },
       error: err => { this.toastr.error('Failed to load autotune settings'); }

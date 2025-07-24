@@ -49,6 +49,8 @@
 #define NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC "max_frequency_asic"
 #define NVS_CONFIG_KEY_MAX_ASIC_TEMPERATUR "max_asic_temperatur"
 #define NVS_CONFIG_KEY_AUTO_TUNE_ENABLE "auto_tune_hashrate"
+#define NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT "overshot_power_limit"
+#define NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT "overshot_fan_limit"
 
 // Theme configuration
 #define NVS_CONFIG_THEME_SCHEME "themescheme"
