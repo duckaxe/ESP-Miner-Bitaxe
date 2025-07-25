@@ -1152,6 +1152,8 @@ esp_err_t GET_autotune_info(httpd_req_t * req)
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, AUTO_TUNE.auto_tune_hashrate);
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, AUTO_TUNE.overshot_power_limit);
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT, AUTO_TUNE.overshot_fanspeed);
+    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
+    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
 
     const char *response = cJSON_Print(root);
     httpd_resp_sendstr(req, response);
@@ -1220,19 +1222,19 @@ esp_err_t POST_autotune_update(httpd_req_t * req)
     }
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.overshot_power_limit = item->valuedouble;
-        nvs_config_set_u16(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, (uint16_t)AUTO_TUNE.overshot_power_limit);
+        nvs_config_set_u64(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, AUTO_TUNE.overshot_power_limit);
     }
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.overshot_fanspeed = (uint16_t)item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT, (uint16_t)AUTO_TUNE.overshot_fanspeed);
     }
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_VF_RATIO_MAX)) && cJSON_IsNumber(item)) {
-        AUTO_TUNE.vf_ratio_max = (uint16_t)item->valuedouble;
-        nvs_config_set_u16(NVS_CONFIG_KEY_VF_RATIO_MAX, (uint16_t)AUTO_TUNE.vf_ratio_max);
+        AUTO_TUNE.vf_ratio_max = item->valuedouble;
+        nvs_config_set_u64(NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
     }
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_VF_RATIO_MIN)) && cJSON_IsNumber(item)) {
-        AUTO_TUNE.vf_ratio_min = (uint16_t)item->valuedouble;
-        nvs_config_set_u16(NVS_CONFIG_KEY_VF_RATIO_MIN, (uint16_t)AUTO_TUNE.vf_ratio_min);
+        AUTO_TUNE.vf_ratio_min = item->valuedouble;
+        nvs_config_set_u64(NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
     }
 
     cJSON_Delete(root);
