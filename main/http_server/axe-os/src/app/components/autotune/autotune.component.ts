@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'autotune',
   templateUrl: './autotune.component.html',
+  styleUrls: ['./autotune.component.scss'] 
 })
 export class AutotuneComponent implements OnInit {
   constructor(private fb: FormBuilder,

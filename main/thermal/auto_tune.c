@@ -1,7 +1,6 @@
 #include "auto_tune.h"
 #include "PID.h"
 #include "esp_log.h"
-#include "mining_module.h"
 #include "nvs_config.h"
 #include "power_management_task.h"
 #include <float.h>
@@ -22,8 +21,8 @@ auto_tune_settings AUTO_TUNE = {.power_limit = 20,
                                 .frequency = 525,
                                 .voltage = 1150,
                                 .auto_tune_hashrate = true,
-                                .overshot_power_limit = 0.2; //watt
-                                .overshot_fanspeed = 5; //%
+                                .overshot_power_limit = 0.2, //watt
+                                .overshot_fanspeed = 5 //%
 };
 
 double last_core_voltage_auto;
@@ -185,10 +184,9 @@ void respectLimits()
     }
 }
 
-void dowork()
+void dowork() {
     avg_hashrate_auto = (avg_hashrate_auto == 0) ? GLOBAL_STATE->SYSTEM_MODULE.current_hashrate :
                                                                0.99 * avg_hashrate_auto + 0.01 * GLOBAL_STATE->SYSTEM_MODULE.current_hashrate;
-                                                 : 0.99 * avg_hashrate_auto + 0.01 * SYSTEM_MODULE.current_hashrate;
 
     double hashrate_delta = current_hashrate_auto - last_hashrate_auto;
     double base = (last_hashrate_auto == 0) ? 1 : last_hashrate_auto;

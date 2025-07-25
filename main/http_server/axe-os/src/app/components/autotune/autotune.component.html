@@ -2,42 +2,88 @@
     <div class="card">
         <form [formGroup]="autotuneForm" (ngSubmit)="updateAutotune()" *ngIf="autotuneForm">
             <h3>Autotune Settings</h3>
+
+            <!-- Auto Tune Hashrate -->
             <div class="field grid p-fluid">
                 <label for="auto_tune_hashrate" class="col-12 md:col-2 md:m-0">Auto Tune Hashrate</label>
+                <span class="tooltip-container">
+                    <small class="col-12 md:col-2 md:m-0">?</small>
+                    <span class="tooltip">Enables automatic tuning of hashrate</span>
+                </span>
                 <input type="checkbox" id="auto_tune_hashrate" formControlName="auto_tune_hashrate" />
             </div>
-            <div>
-                <div class="field grid p-fluid">
-                    <label class="col-12 md:col-2 md:m-0">Power Limit Watt</label>
-                    <input type="number" class="form-control" formControlName="power_limit">
-                </div>
-                <div class="field grid p-fluid">
-                    <label class="col-12 md:col-2 md:m-0">Fan Limit %</label>
-                    <input type="number" class="form-control" formControlName="fan_limit">
-                </div>
-                <div class="field grid p-fluid">
-                    <label class="col-12 md:col-2 md:m-0">Overshot Power Limit Watt</label>
-                    <input type="number" class="form-control" formControlName="overshot_power_limit">
-                </div>
-                <div class="field grid p-fluid">
-                    <label class="col-12 md:col-2 md:m-0">Overshot Fanspeed %</label>
-                    <input type="number" class="form-control" formControlName="overshot_fanspeed">
-                </div>
-                <div class="field grid p-fluid">
-                    <label class="col-12 md:col-2 md:m-0">Max Voltage ASIC mV</label>
-                    <input type="number" class="form-control" formControlName="max_voltage_asic">
-                </div>
-                <div class="field grid p-fluid">
-                    <label class="col-12 md:col-2 md:m-0">Max Frequency ASIC MHz</label>
-                    <input type="number" class="form-control" formControlName="max_frequency_asic">
-                </div>
-                <div class="field grid p-fluid">
-                    <label class="col-12 md:col-2 md:m-0">Max ASIC Temperatur °C</label>
-                    <input type="number" class="form-control" formControlName="max_asic_temperatur">
-                </div>
+
+            <!-- Power Limit -->
+            <div class="field grid p-fluid">
+                <label for="power_limit" class="col-12 md:col-2 md:m-0">Power Limit</label>
+                <span class="tooltip-container">
+                    <small class="col-12 md:col-2 md:m-0">?</small>
+                    <span class="tooltip">Maximum power limit in watts</span>
+                </span>
+                <input type="number" id="power_limit" class="form-control" formControlName="power_limit">
             </div>
-            <button type="submit" class="btn btn-primary" [disabled]="!autotuneForm.valid">Save Autotune
-                Settings</button>
+
+            <!-- Fan Limit -->
+            <div class="field grid p-fluid">
+                <label for="fan_limit" class="col-12 md:col-2 md:m-0">Fan Limit</label>
+                <span class="tooltip-container">
+                    <small class="col-12 md:col-2 md:m-0">?</small>
+                    <span class="tooltip">Maximum fan speed limit in percent</span>
+                </span>
+                <input type="number" id="fan_limit" class="form-control" formControlName="fan_limit">
+            </div>
+
+            <!-- Overshot Power Limit -->
+            <div class="field grid p-fluid">
+                <label for="overshot_power_limit" class="col-12 md:col-2 md:m-0">Overshot Power Limit</label>
+                <span class="tooltip-container">
+                    <small class="col-12 md:col-2 md:m-0">?</small>
+                    <span class="tooltip">Maximum allowed power overshoot in watts</span>
+                </span>
+                <input type="number" id="overshot_power_limit" class="form-control" formControlName="overshot_power_limit">
+            </div>
+
+            <!-- Overshot Fanspeed -->
+            <div class="field grid p-fluid">
+                <label for="overshot_fanspeed" class="col-12 md:col-2 md:m-0">Overshot Fanspeed</label>
+                <span class="tooltip-container">
+                    <small class="col-12 md:col-2 md:m-0">?</small>
+                    <span class="tooltip">Maximum allowed fan speed overshoot in percent</span>
+                </span>
+                <input type="number" id="overshot_fanspeed" class="form-control" formControlName="overshot_fanspeed">
+            </div>
+
+            <!-- Max Voltage ASIC -->
+            <div class="field grid p-fluid">
+                <label for="max_voltage_asic" class="col-12 md:col-2 md:m-0">Max Voltage ASIC</label>
+                <span class="tooltip-container">
+                    <small class="col-12 md:col-2 md:m-0">?</small>
+                    <span class="tooltip">Maximum voltage for ASIC in millivolts</span>
+                </span>
+                <input type="number" id="max_voltage_asic" class="form-control" formControlName="max_voltage_asic">
+            </div>
+
+            <!-- Max Frequency ASIC -->
+            <div class="field grid p-fluid">
+                <label for="max_frequency_asic" class="col-12 md:col-2 md:m-0">Max Frequency ASIC</label>
+                <span class="tooltip-container">
+                    <small class="col-12 md:col-2 md:m-0">?</small>
+                    <span class="tooltip">Maximum frequency for ASIC in megahertz</span>
+                </span>
+                <input type="number" id="max_frequency_asic" class="form-control" formControlName="max_frequency_asic">
+            </div>
+
+            <!-- Max ASIC Temperature -->
+            <div class="field grid p-fluid">
+                <label for="max_asic_temperatur" class="col-12 md:col-2 md:m-0">Max ASIC Temperature</label>
+                <span class="tooltip-container">
+                    <small class="col-12 md:col-2 md:m-0">?</small>
+                    <span class="tooltip">Maximum temperature for ASIC in degrees Celsius</span>
+                </span>
+                <input type="number" id="max_asic_temperatur" class="form-control" formControlName="max_asic_temperatur">
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="!autotuneForm.valid">Save Autotune Settings</button>
         </form>
     </div>
 </ng-container>
