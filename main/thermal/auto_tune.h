@@ -21,6 +21,8 @@ typedef struct
     bool auto_tune_hashrate;
     double overshot_power_limit;
     uint16_t overshot_fanspeed;
+    double vf_ratio_max;
+    double vf_ratio_min;
 } auto_tune_settings;
 
 extern auto_tune_settings AUTO_TUNE;

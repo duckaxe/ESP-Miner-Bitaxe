@@ -7,8 +7,8 @@
             <div class="field grid p-fluid">
                 <label for="auto_tune_hashrate" class="col-12 md:col-2 md:m-0">Auto Tune Hashrate</label>
                 <span class="tooltip-container">
-                    <small class="col-12 md:col-2 md:m-0">?</small>
-                    <span class="tooltip">Enables automatic tuning of hashrate</span>
+                    <small>?</small>
+                    <span class="tooltip">Enables automatic tuning of hashrate based on system conditions.</span>
                 </span>
                 <input type="checkbox" id="auto_tune_hashrate" formControlName="auto_tune_hashrate" />
             </div>
@@ -17,8 +17,8 @@
             <div class="field grid p-fluid">
                 <label for="power_limit" class="col-12 md:col-2 md:m-0">Power Limit</label>
                 <span class="tooltip-container">
-                    <small class="col-12 md:col-2 md:m-0">?</small>
-                    <span class="tooltip">Maximum power limit in watts</span>
+                    <small>?</small>
+                    <span class="tooltip">Sets the maximum power limit in watts. Prevents power consumption from exceeding this threshold.</span>
                 </span>
                 <input type="number" id="power_limit" class="form-control" formControlName="power_limit">
             </div>
@@ -27,8 +27,8 @@
             <div class="field grid p-fluid">
                 <label for="fan_limit" class="col-12 md:col-2 md:m-0">Fan Limit</label>
                 <span class="tooltip-container">
-                    <small class="col-12 md:col-2 md:m-0">?</small>
-                    <span class="tooltip">Maximum fan speed limit in percent</span>
+                    <small>?</small>
+                    <span class="tooltip">Sets the maximum fan speed limit in percent. Ensures fans do not exceed this speed to control noise and wear.</span>
                 </span>
                 <input type="number" id="fan_limit" class="form-control" formControlName="fan_limit">
             </div>
@@ -37,8 +37,8 @@
             <div class="field grid p-fluid">
                 <label for="overshot_power_limit" class="col-12 md:col-2 md:m-0">Overshot Power Limit</label>
                 <span class="tooltip-container">
-                    <small class="col-12 md:col-2 md:m-0">?</small>
-                    <span class="tooltip">Maximum allowed power overshoot in watts</span>
+                    <small>?</small>
+                    <span class="tooltip">Maximum allowed power overshoot in watts. Provides a buffer for temporary spikes above the power limit.</span>
                 </span>
                 <input type="number" id="overshot_power_limit" class="form-control" formControlName="overshot_power_limit">
             </div>
@@ -47,8 +47,8 @@
             <div class="field grid p-fluid">
                 <label for="overshot_fanspeed" class="col-12 md:col-2 md:m-0">Overshot Fanspeed</label>
                 <span class="tooltip-container">
-                    <small class="col-12 md:col-2 md:m-0">?</small>
-                    <span class="tooltip">Maximum allowed fan speed overshoot in percent</span>
+                    <small>?</small>
+                    <span class="tooltip">Maximum allowed fan speed overshoot in percent. Provides a buffer for temporary spikes above the fan limit.</span>
                 </span>
                 <input type="number" id="overshot_fanspeed" class="form-control" formControlName="overshot_fanspeed">
             </div>
@@ -57,8 +57,8 @@
             <div class="field grid p-fluid">
                 <label for="max_voltage_asic" class="col-12 md:col-2 md:m-0">Max Voltage ASIC</label>
                 <span class="tooltip-container">
-                    <small class="col-12 md:col-2 md:m-0">?</small>
-                    <span class="tooltip">Maximum voltage for ASIC in millivolts</span>
+                    <small>?</small>
+                    <span class="tooltip">Maximum voltage for the ASIC in millivolts. Prevents over-voltage conditions that could damage hardware.</span>
                 </span>
                 <input type="number" id="max_voltage_asic" class="form-control" formControlName="max_voltage_asic">
             </div>
@@ -67,8 +67,8 @@
             <div class="field grid p-fluid">
                 <label for="max_frequency_asic" class="col-12 md:col-2 md:m-0">Max Frequency ASIC</label>
                 <span class="tooltip-container">
-                    <small class="col-12 md:col-2 md:m-0">?</small>
-                    <span class="tooltip">Maximum frequency for ASIC in megahertz</span>
+                    <small>?</small>
+                    <span class="tooltip">Maximum frequency for the ASIC in megahertz. Prevents overclocking beyond safe limits.</span>
                 </span>
                 <input type="number" id="max_frequency_asic" class="form-control" formControlName="max_frequency_asic">
             </div>
@@ -77,10 +77,30 @@
             <div class="field grid p-fluid">
                 <label for="max_asic_temperatur" class="col-12 md:col-2 md:m-0">Max ASIC Temperature</label>
                 <span class="tooltip-container">
-                    <small class="col-12 md:col-2 md:m-0">?</small>
-                    <span class="tooltip">Maximum temperature for ASIC in degrees Celsius</span>
+                    <small>?</small>
+                    <span class="tooltip">Maximum temperature for the ASIC in degrees Celsius. Ensures thermal safety to prevent hardware damage.</span>
                 </span>
                 <input type="number" id="max_asic_temperatur" class="form-control" formControlName="max_asic_temperatur">
+            </div>
+
+            <!-- Max V/F Ratio -->
+            <div class="field grid p-fluid">
+                <label for="vf_ratio_max" class="col-12 md:col-2 md:m-0">Max V/F Ratio</label>
+                <span class="tooltip-container">
+                    <small>?</small>
+                    <span class="tooltip">Sets the maximum allowable Voltage/Frequency ratio. This ratio is crucial for determining efficiency and power delivery to ASICs. A higher ratio can lead to overheating, while a lower one might not provide enough power.</span>
+                </span>
+                <input type="number" id="vf_ratio_max" class="form-control" formControlName="vf_ratio_max">
+            </div>
+
+            <!-- Min V/F Ratio -->
+            <div class="field grid p-fluid">
+                <label for="vf_ratio_min" class="col-12 md:col-2 md:m-0">Min V/F Ratio</label>
+                <span class="tooltip-container">
+                    <small>?</small>
+                    <span class="tooltip">Sets the minimum allowable Voltage/Frequency ratio. This ratio affects energy efficiency and chip performance. Setting this too low could cause insufficient power supply, leading to performance degradation or system instability.</span>
+                </span>
+                <input type="number" id="vf_ratio_min" class="form-control" formControlName="vf_ratio_min">
             </div>
 
             <button type="submit" class="btn btn-primary" [disabled]="!autotuneForm.valid">Save Autotune Settings</button>

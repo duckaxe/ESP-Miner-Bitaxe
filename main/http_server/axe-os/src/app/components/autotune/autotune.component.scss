@@ -21,8 +21,8 @@
   position: absolute;
   z-index: 1;
   bottom: 125%; /* Adjust this to control vertical positioning */
-  left: 50%;
-  transform: translateX(-50%);
+  border-radius: 6px;
+  padding: 10px;
 }
 
 .tooltip-container:hover .tooltip {

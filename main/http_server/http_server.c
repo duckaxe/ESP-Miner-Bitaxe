@@ -1202,22 +1202,6 @@ esp_err_t POST_autotune_update(httpd_req_t * req)
         AUTO_TUNE.fan_limit = item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_FAN_LIMIT, (uint16_t)AUTO_TUNE.fan_limit);
     }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_STEP_VOLT)) && cJSON_IsNumber(item)) {
-        AUTO_TUNE.step_volt = item->valuedouble;
-        // Optionally store in NVS if you add a key
-    }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_STEP_FREQ_RAMPUP)) && cJSON_IsNumber(item)) {
-        AUTO_TUNE.step_freq_rampup = item->valuedouble;
-        // Optionally store in NVS if you add a key
-    }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_STEP_FREQ)) && cJSON_IsNumber(item)) {
-        AUTO_TUNE.step_freq = item->valuedouble;
-        // Optionally store in NVS if you add a key
-    }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_AUTOTUNE_STEP_FREQ)) && cJSON_IsNumber(item)) {
-        AUTO_TUNE.autotune_step_frequency = item->valuedouble;
-        // Optionally store in NVS if you add a key
-    }
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.max_voltage_asic = item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC, (uint16_t)AUTO_TUNE.max_voltage_asic);
@@ -1230,19 +1214,25 @@ esp_err_t POST_autotune_update(httpd_req_t * req)
         AUTO_TUNE.max_asic_temperatur = item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_MAX_ASIC_TEMPERATUR, (uint16_t)AUTO_TUNE.max_asic_temperatur);
     }
-
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_AUTO_TUNE_ENABLE)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.auto_tune_hashrate = item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, (uint16_t)AUTO_TUNE.auto_tune_hashrate);
     }
-
-    if ((item = cJSON_GetObjectItem(root, "overshot_power_limit")) && cJSON_IsNumber(item)) {
+    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.overshot_power_limit = item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, (uint16_t)AUTO_TUNE.overshot_power_limit);
     }
-    if ((item = cJSON_GetObjectItem(root, "overshot_fanspeed")) && cJSON_IsNumber(item)) {
+    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.overshot_fanspeed = (uint16_t)item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT, (uint16_t)AUTO_TUNE.overshot_fanspeed);
+    }
+    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_VF_RATIO_MAX)) && cJSON_IsNumber(item)) {
+        AUTO_TUNE.vf_ratio_max = (uint16_t)item->valuedouble;
+        nvs_config_set_u16(NVS_CONFIG_KEY_VF_RATIO_MAX, (uint16_t)AUTO_TUNE.vf_ratio_max);
+    }
+    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_VF_RATIO_MIN)) && cJSON_IsNumber(item)) {
+        AUTO_TUNE.vf_ratio_min = (uint16_t)item->valuedouble;
+        nvs_config_set_u16(NVS_CONFIG_KEY_VF_RATIO_MIN, (uint16_t)AUTO_TUNE.vf_ratio_min);
     }
 
     cJSON_Delete(root);

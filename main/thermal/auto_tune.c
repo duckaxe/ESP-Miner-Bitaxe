@@ -22,7 +22,9 @@ auto_tune_settings AUTO_TUNE = {.power_limit = 20,
                                 .voltage = 1150,
                                 .auto_tune_hashrate = true,
                                 .overshot_power_limit = 0.2, //watt
-                                .overshot_fanspeed = 5 //%
+                                .overshot_fanspeed = 5, //%
+                                .vf_ratio_max = 2.2,
+                                .vf_ratio_min = 1.76,
 };
 
 double last_core_voltage_auto;
@@ -112,8 +114,8 @@ static inline double clamp(double val, double min, double max)
 
 static void enforce_voltage_frequency_ratio()
 {
-    double min_voltage = last_asic_frequency_auto * 1.75;
-    double max_voltage = last_asic_frequency_auto * 2.2;
+    double min_voltage = last_asic_frequency_auto * AUTO_TUNE.vf_ratio_min;
+    double max_voltage = last_asic_frequency_auto * AUTO_TUNE.vf_ratio_max;
 
     if (last_core_voltage_auto < min_voltage) {
         last_core_voltage_auto = min_voltage;
@@ -123,8 +125,8 @@ static void enforce_voltage_frequency_ratio()
         lastVoltageSet = false;
     }
 
-    double min_frequency = last_core_voltage_auto / 2.2;
-    double max_frequency = last_core_voltage_auto / 1.75;
+    double min_frequency = last_core_voltage_auto / AUTO_TUNE.vf_ratio_max;
+    double max_frequency = last_core_voltage_auto / AUTO_TUNE.vf_ratio_min;
 
     if (last_asic_frequency_auto < min_frequency) {
         last_asic_frequency_auto = min_frequency;
