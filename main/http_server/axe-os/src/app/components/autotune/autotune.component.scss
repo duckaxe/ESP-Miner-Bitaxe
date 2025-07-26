@@ -1,31 +1,5 @@
-.small {
-  font-size: 0.8em;
-}
-
-.tooltip-container {
-  position: relative;
-  display: inline-block;
-}
-
-.tooltip {
-  opacity: 0;
-  visibility: hidden;
-  width: max-content;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px;
-
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-  bottom: 125%; /* Adjust this to control vertical positioning */
-  border-radius: 6px;
-  padding: 10px;
-}
-
-.tooltip-container:hover .tooltip {
-  visibility: visible;
-  opacity: 1;
+.pi {
+    right: 1rem;
+    font-size: 1.5rem;
+    top: 1rem;
 }
