@@ -11,9 +11,8 @@
                     </label>
                     <div class="col-12 md:col-10">
                         <p-checkbox type="checkbox" id="auto_tune_hashrate" class="form-control"
-                            formControlName="auto_tune_hashrate" [binary]="true"
-                            (change)="updateAutotuneHashrateCheckbox($event)">
-                            {{ (autotuneForm.get('auto_tune_hashrate') || {}).value }}
+                            [(ngModel)]="autotuneForm.value.auto_tune_hashrate" formControlName="auto_tune_hashrate"
+                            binary>
                         </p-checkbox>
                     </div>
                 </div>
@@ -126,7 +125,7 @@
                 </div>
             </div>
 
-            <button pButton [disabled]="!autotuneForm.valid" (click)="updateAutotune()">Save</button>
+            <button pButton [disabled]="!autotuneForm.valid" type="submit">Save</button>
         </form>
     </div>
 </ng-container>

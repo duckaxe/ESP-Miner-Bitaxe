@@ -1216,13 +1216,13 @@ esp_err_t POST_autotune_update(httpd_req_t * req)
         AUTO_TUNE.max_asic_temperatur = item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_MAX_ASIC_TEMPERATUR, (uint16_t)AUTO_TUNE.max_asic_temperatur);
     }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_AUTO_TUNE_ENABLE)) && cJSON_IsNumber(item)) {
-        AUTO_TUNE.auto_tune_hashrate = item->valuedouble;
-        nvs_config_set_u16(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, (uint16_t)AUTO_TUNE.auto_tune_hashrate);
+        if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_AUTO_TUNE_ENABLE)) && cJSON_IsBool(item)) {
+        AUTO_TUNE.auto_tune_hashrate = item->valueint;
+        nvs_config_set_u16(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, AUTO_TUNE.auto_tune_hashrate);
     }
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.overshot_power_limit = item->valuedouble;
-        nvs_config_set_u64(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, AUTO_TUNE.overshot_power_limit);
+        nvs_config_set_double(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, AUTO_TUNE.overshot_power_limit);
     }
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.overshot_fanspeed = (uint16_t)item->valuedouble;
@@ -1230,11 +1230,11 @@ esp_err_t POST_autotune_update(httpd_req_t * req)
     }
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_VF_RATIO_MAX)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.vf_ratio_max = item->valuedouble;
-        nvs_config_set_u64(NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
+        nvs_config_set_double(NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
     }
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_VF_RATIO_MIN)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.vf_ratio_min = item->valuedouble;
-        nvs_config_set_u64(NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
+        nvs_config_set_double(NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
     }
 
     cJSON_Delete(root);

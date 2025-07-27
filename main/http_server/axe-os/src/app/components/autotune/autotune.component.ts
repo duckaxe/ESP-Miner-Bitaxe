@@ -34,8 +34,9 @@ export class AutotuneComponent implements OnInit {
     this.systemService.getAutotune().subscribe({
       next: autotune => {
         this.autotuneInfo = autotune;
+        const autoTuneHashrate = !!autotune.auto_tune_hashrate;
         this.autotuneForm.patchValue({
-          auto_tune_hashrate: autotune.auto_tune_hashrate,
+          auto_tune_hashrate: autoTuneHashrate,
           power_limit: autotune.power_limit ?? 20,
           fan_limit: autotune.fan_limit ?? 75,
           max_voltage_asic: autotune.max_voltage_asic ?? 1400,
@@ -62,7 +63,4 @@ export class AutotuneComponent implements OnInit {
       });
   }
 
-  updateAutotuneHashrateCheckbox(event: any): void {
-    //console.log('updateAutotuneHashrateCheckbox called with value:', event.checked);
-  }
 }
