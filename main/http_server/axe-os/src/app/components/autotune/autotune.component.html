@@ -10,7 +10,11 @@
                             pTooltip="Enables automatic tuning of hashrate based on system conditions."></i>
                     </label>
                     <div class="col-12 md:col-10">
-                        <p-checkbox type="checkbox" id="auto_tune_hashrate" formControlName="auto_tune_hashrate" [binary]="true"/>
+                        <p-checkbox type="checkbox" id="auto_tune_hashrate" class="form-control"
+                            formControlName="auto_tune_hashrate" [binary]="true"
+                            (change)="updateAutotuneHashrateCheckbox($event)">
+                            {{ (autotuneForm.get('auto_tune_hashrate') || {}).value }}
+                        </p-checkbox>
                     </div>
                 </div>
 
@@ -21,7 +25,8 @@
                             pTooltip="Sets the maximum power limit in watts. Prevents power consumption from exceeding this threshold."></i>
                     </label>
                     <div class="col-12 md:col-10">
-                        <input pInputText type="number" id="power_limit" class="form-control" formControlName="power_limit">
+                        <input pInputText type="number" id="power_limit" class="form-control"
+                            formControlName="power_limit">
                     </div>
                 </div>
 
@@ -103,7 +108,8 @@
                             pTooltip="Sets the maximum allowable Voltage/Frequency ratio. This ratio is crucial for determining efficiency and power delivery to ASICs. A higher ratio can lead to overheating, while a lower one might not provide enough power."></i>
                     </label>
                     <div class="col-12 md:col-10">
-                        <input pInputText type="number" id="vf_ratio_max" class="form-control" formControlName="vf_ratio_max">
+                        <input pInputText type="number" id="vf_ratio_max" class="form-control"
+                            formControlName="vf_ratio_max">
                     </div>
                 </div>
 
@@ -114,12 +120,13 @@
                             pTooltip="Sets the minimum allowable Voltage/Frequency ratio. This ratio affects energy efficiency and chip performance. Setting this too low could cause insufficient power supply, leading to performance degradation or system instability."></i>
                     </label>
                     <div class="col-12 md:col-10">
-                        <input pInputText type="number" id="vf_ratio_min" class="form-control" formControlName="vf_ratio_min">
+                        <input pInputText type="number" id="vf_ratio_min" class="form-control"
+                            formControlName="vf_ratio_min">
                     </div>
                 </div>
             </div>
 
-            <button pButton [disabled]="!autotuneForm.valid" (click)="updateAutotune()">Save Autotune Settings</button>
+            <button pButton [disabled]="!autotuneForm.valid" (click)="updateAutotune()">Save</button>
         </form>
     </div>
 </ng-container>

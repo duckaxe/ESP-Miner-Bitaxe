@@ -20,7 +20,7 @@ auto_tune_settings AUTO_TUNE = {.power_limit = 20,
                                 .max_asic_temperatur = 65,
                                 .frequency = 525,
                                 .voltage = 1150,
-                                .auto_tune_hashrate = true,
+                                .auto_tune_hashrate = false,
                                 .overshot_power_limit = 0.2, //watt
                                 .overshot_fanspeed = 5, //%
                                 .vf_ratio_max = 2.2,

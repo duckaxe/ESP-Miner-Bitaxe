@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'autotune',
   templateUrl: './autotune.component.html',
-  styleUrls: ['./autotune.component.scss'] 
+  styleUrls: ['./autotune.component.scss']
 })
 export class AutotuneComponent implements OnInit {
   constructor(private fb: FormBuilder,
@@ -16,16 +16,15 @@ export class AutotuneComponent implements OnInit {
   public autotuneForm!: FormGroup;
   public autotuneInfo: any = {};
 
-
   ngOnInit() {
     this.autotuneForm = this.fb.group({
-      auto_tune_hashrate: [true, [Validators.required, Validators.required]],
+      auto_tune_hashrate: [false],
       power_limit: [20, [Validators.required, Validators.min(1)]],
       fan_limit: [75, [Validators.required, Validators.min(1)]],
       max_voltage_asic: [1400, [Validators.required, Validators.min(1)]],
       max_frequency_asic: [1000, [Validators.required, Validators.min(1)]],
       max_asic_temperatur: [65, [Validators.required, Validators.min(1)]],
-      overshot_power_limit: [0.2],  
+      overshot_power_limit: [0.2],
       overshot_fanspeed: [5],
       vf_ratio_max: [2.2],
       vf_ratio_min: [1.76],
@@ -59,7 +58,11 @@ export class AutotuneComponent implements OnInit {
     this.systemService.updateAutotune(this.autotuneForm.value)
       .subscribe({
         next: () => this.toastr.success('Autotune settings saved!'),
-        error: (err: HttpErrorResponse) => {this.toastr.error(`Could not save autotune settings. ${err.message}`);}
+        error: (err: HttpErrorResponse) => { this.toastr.error(`Could not save autotune settings. ${err.message}`); }
       });
+  }
+
+  updateAutotuneHashrateCheckbox(event: any): void {
+    //console.log('updateAutotuneHashrateCheckbox called with value:', event.checked);
   }
 }
