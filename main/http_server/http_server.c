@@ -1142,14 +1142,10 @@ esp_err_t GET_autotune_info(httpd_req_t * req)
     cJSON *root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_POWER_LIMIT, AUTO_TUNE.power_limit);
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_FAN_LIMIT, AUTO_TUNE.fan_limit);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_STEP_VOLT, AUTO_TUNE.step_volt);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_STEP_FREQ_RAMPUP, AUTO_TUNE.step_freq_rampup);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_STEP_FREQ, AUTO_TUNE.step_freq);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_AUTOTUNE_STEP_FREQ, AUTO_TUNE.autotune_step_frequency);
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC, AUTO_TUNE.max_voltage_asic);
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC, AUTO_TUNE.max_frequency_asic);
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_MAX_ASIC_TEMPERATUR, AUTO_TUNE.max_asic_temperatur);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, AUTO_TUNE.auto_tune_hashrate);
+    cJSON_AddBoolToObject(root, NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, AUTO_TUNE.auto_tune_hashrate);
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, AUTO_TUNE.overshot_power_limit);
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT, AUTO_TUNE.overshot_fanspeed);
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
@@ -1218,7 +1214,7 @@ esp_err_t POST_autotune_update(httpd_req_t * req)
     }
         if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_AUTO_TUNE_ENABLE)) && cJSON_IsBool(item)) {
         AUTO_TUNE.auto_tune_hashrate = item->valueint;
-        nvs_config_set_u16(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, AUTO_TUNE.auto_tune_hashrate);
+        nvs_config_set_bool(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, (bool)AUTO_TUNE.auto_tune_hashrate);
     }
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.overshot_power_limit = item->valuedouble;
