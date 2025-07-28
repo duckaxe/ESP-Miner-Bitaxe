@@ -797,6 +797,7 @@ int create_json_statistics_dashboard(cJSON * root)
                 cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.timestamp));
                 cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.frequency));
                 cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.voltage));
+                cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.core_voltage));
 
                 cJSON_AddItemToArray(statsArray, valueArray);
                 prebuffer++;

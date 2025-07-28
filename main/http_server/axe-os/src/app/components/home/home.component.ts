@@ -196,10 +196,10 @@ export class HomeComponent {
               if (tooltipItem.dataset.label === 'ASIC Temp') {
                 label += tooltipItem.raw + '°C';
               }
-              if (tooltipItem.dataset.label === 'Frequency') {
+              else if (tooltipItem.dataset.label === 'Frequency') {
                 label += tooltipItem.raw + ' MHz';
               }
-              if (tooltipItem.dataset.label === 'Voltage') {
+              else if (tooltipItem.dataset.label === 'Voltage') {
                 label += tooltipItem.raw + ' mV';
               }
               else {
@@ -300,7 +300,7 @@ export class HomeComponent {
         this.powerData.push(element[idxPower]);
         this.dataLabel.push(new Date().getTime() - stats.currentTimestamp + element[idxTimestamp]);
         this.frequencyData.push(element[4]);
-        this.voltageData.push(element[5]);
+        this.voltageData.push(element[6]);
 
         if (this.hashrateData.length >= 720) {
           this.hashrateData.shift();
