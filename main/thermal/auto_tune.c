@@ -1,10 +1,10 @@
 #include "auto_tune.h"
 #include "PID.h"
 #include "esp_log.h"
+#include "global_state.h"
 #include "nvs_config.h"
 #include "power_management_task.h"
 #include <float.h>
-#include "global_state.h"
 #include <math.h>
 
 static const char * TAG = "auto_tune";
@@ -70,7 +70,6 @@ void auto_tune_init(GlobalState * _GLOBAL_STATE)
     AUTO_TUNE.vf_ratio_max = nvs_config_get_double(NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
     AUTO_TUNE.vf_ratio_min = nvs_config_get_double(NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
 
-
     last_core_voltage_auto = AUTO_TUNE.voltage;
     last_asic_frequency_auto = AUTO_TUNE.frequency;
     last_hashrate_auto = GLOBAL_STATE->SYSTEM_MODULE.current_hashrate;
@@ -93,15 +92,16 @@ bool can_increase_values()
 
 bool limithit()
 {
-    return GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc > AUTO_TUNE.fan_limit || GLOBAL_STATE->POWER_MANAGEMENT_MODULE.power > AUTO_TUNE.power_limit ||
+    return GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc > AUTO_TUNE.fan_limit ||
+           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.power > AUTO_TUNE.power_limit ||
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg > AUTO_TUNE.max_asic_temperatur;
 }
 
 bool critical_limithit()
 {
     return GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg > AUTO_TUNE.max_asic_temperatur ||
-           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.power >= AUTO_TUNE.power_limit +  AUTO_TUNE.overshot_power_limit ||
-           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc >= AUTO_TUNE.fan_limit +  AUTO_TUNE.overshot_fanspeed;
+           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.power >= AUTO_TUNE.power_limit + AUTO_TUNE.overshot_power_limit ||
+           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc >= AUTO_TUNE.fan_limit + AUTO_TUNE.overshot_fanspeed;
 }
 
 bool hashrate_decreased()
@@ -149,30 +149,6 @@ void increase_values()
     enforce_voltage_frequency_ratio();
 }
 
-void decrease_values()
-{
-    if (!lastVoltageSet) {
-        last_asic_frequency_auto -= freq_step;
-    } else {
-        last_core_voltage_auto -= volt_step;
-    }
-
-    enforce_voltage_frequency_ratio();
-}
-
-void switchvalue()
-{
-    if (lastVoltageSet) {
-        last_asic_frequency_auto += freq_step;
-        last_core_voltage_auto -= volt_step;
-    } else {
-        last_asic_frequency_auto -= freq_step;
-        last_core_voltage_auto += volt_step;
-    }
-
-    enforce_voltage_frequency_ratio();
-}
-
 void respectLimits()
 {
     last_asic_frequency_auto = clamp(last_asic_frequency_auto, MIN_FREQ, AUTO_TUNE.max_frequency_asic);
@@ -185,28 +161,20 @@ void respectLimits()
 
 void dowork()
 {
-
     freq_step = AUTO_TUNE.autotune_step_frequency;
     volt_step = AUTO_TUNE.step_volt;
 
     if (hashrate_decreased())
         lastVoltageSet = !lastVoltageSet;
-    if (limithit()) {
-        if (!critical_limithit()) {
-            switchvalue();
-        } else {
-            last_asic_frequency_auto -= AUTO_TUNE.autotune_step_frequency;
-            last_core_voltage_auto -= AUTO_TUNE.step_volt;
-        }
+    if (critical_limithit()) {
+        last_asic_frequency_auto -= AUTO_TUNE.autotune_step_frequency;
+        last_core_voltage_auto -= AUTO_TUNE.step_volt;
     } else if (can_increase_values()) {
         increase_values();
-    } else {
-        decrease_values();
     }
 
     ESP_LOGI(TAG, "Hashrate %f Voltage %f Frequency %f", current_hashrate_auto, last_core_voltage_auto, last_asic_frequency_auto);
 
-    
     respectLimits();
     AUTO_TUNE.voltage = last_core_voltage_auto;
     AUTO_TUNE.frequency = last_asic_frequency_auto;
@@ -218,7 +186,7 @@ void auto_tune(bool pid_control_fanspeed)
 
     switch (state) {
     case sleep_before_warmup:
-            if (GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg == -1) {
+        if (GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg == -1) {
             break;
         }
 
