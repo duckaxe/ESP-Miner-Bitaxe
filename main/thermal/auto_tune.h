@@ -16,6 +16,7 @@ typedef struct
     uint16_t max_voltage_asic;
     uint16_t max_frequency_asic;
     uint8_t max_asic_temperatur;
+    uint16_t max_vr_temperatur;
     double frequency;
     double voltage;
     bool auto_tune_hashrate;

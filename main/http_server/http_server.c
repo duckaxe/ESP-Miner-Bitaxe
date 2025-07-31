@@ -1151,6 +1151,7 @@ esp_err_t GET_autotune_info(httpd_req_t * req)
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT, AUTO_TUNE.overshot_fanspeed);
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
     cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
+    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_MAX_VR_TEMPERATUR, AUTO_TUNE.max_vr_temperatur);
 
     const char *response = cJSON_Print(root);
     httpd_resp_sendstr(req, response);
@@ -1232,6 +1233,10 @@ esp_err_t POST_autotune_update(httpd_req_t * req)
     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_VF_RATIO_MIN)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.vf_ratio_min = item->valuedouble;
         nvs_config_set_double(NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
+    }
+     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_MAX_VR_TEMPERATUR)) && cJSON_IsNumber(item)) {
+        AUTO_TUNE.max_vr_temperatur = (uint16_t)item->valueint;
+        nvs_config_set_u16(NVS_CONFIG_KEY_MAX_VR_TEMPERATUR, (uint16_t)AUTO_TUNE.max_vr_temperatur);
     }
 
     cJSON_Delete(root);

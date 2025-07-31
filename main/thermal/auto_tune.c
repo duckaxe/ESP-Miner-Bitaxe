@@ -19,6 +19,7 @@ auto_tune_settings AUTO_TUNE = {
     .max_voltage_asic = 1400,
     .max_frequency_asic = 1000,
     .max_asic_temperatur = 65,
+    .max_vr_temperatur = 85,
     .frequency = 525,
     .voltage = 1150,
     .auto_tune_hashrate = false,
@@ -69,6 +70,7 @@ void auto_tune_init(GlobalState * _GLOBAL_STATE)
     AUTO_TUNE.overshot_fanspeed = nvs_config_get_u16(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT, AUTO_TUNE.overshot_fanspeed);
     AUTO_TUNE.vf_ratio_max = nvs_config_get_double(NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
     AUTO_TUNE.vf_ratio_min = nvs_config_get_double(NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
+    AUTO_TUNE.max_vr_temperatur = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_VR_TEMPERATUR, AUTO_TUNE.max_vr_temperatur);
 
     last_core_voltage_auto = AUTO_TUNE.voltage;
     last_asic_frequency_auto = AUTO_TUNE.frequency;
@@ -87,7 +89,8 @@ bool can_increase_values()
 {
     return GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc < AUTO_TUNE.fan_limit &&
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.power < AUTO_TUNE.power_limit &&
-           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg < AUTO_TUNE.max_asic_temperatur;
+           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg < AUTO_TUNE.max_asic_temperatur &&
+           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.vr_temp < AUTO_TUNE.max_vr_temperatur;
 }
 
 bool limithit()
@@ -95,13 +98,15 @@ bool limithit()
     return GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc > AUTO_TUNE.fan_limit ||
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.power > AUTO_TUNE.power_limit ||
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg > AUTO_TUNE.max_asic_temperatur;
+           
 }
 
 bool critical_limithit()
 {
     return GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg > AUTO_TUNE.max_asic_temperatur ||
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.power >= AUTO_TUNE.power_limit + AUTO_TUNE.overshot_power_limit ||
-           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc >= AUTO_TUNE.fan_limit + AUTO_TUNE.overshot_fanspeed;
+           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc >= AUTO_TUNE.fan_limit + AUTO_TUNE.overshot_fanspeed || 
+           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.vr_temp > AUTO_TUNE.max_vr_temperatur;
 }
 
 bool hashrate_decreased()

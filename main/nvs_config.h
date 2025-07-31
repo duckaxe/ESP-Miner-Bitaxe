@@ -50,6 +50,7 @@
 #define NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT "osh_fan_limit"
 #define NVS_CONFIG_KEY_VF_RATIO_MAX "vf_ratio_max"
 #define NVS_CONFIG_KEY_VF_RATIO_MIN "vf_ratio_min"
+#define NVS_CONFIG_KEY_MAX_VR_TEMPERATUR "max_temp_vr"
 
 // Theme configuration
 #define NVS_CONFIG_THEME_SCHEME "themescheme"
