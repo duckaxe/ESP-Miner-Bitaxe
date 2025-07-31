@@ -88,6 +88,15 @@ export class AutotuneComponent implements OnInit {
       tooltip: 'Maximum temperature for the ASIC in degrees Celsius. This ensures thermal safety, preventing hardware damage due to overheating.'
     },
     {
+      formControlName: 'max_temp_vr',
+      label: 'Max Temperature VR',
+      min: 20,
+      max: 90,
+      step: 1,
+      unit: '°C',
+      tooltip: 'Maximum temperature for the VoltageRegulator in degrees Celsius. This ensures thermal safety, preventing hardware damage due to overheating.'
+    },
+    {
       formControlName: 'vf_ratio_max',
       label: 'Max V/F Ratio',
       min: 2.0,
@@ -133,6 +142,7 @@ export class AutotuneComponent implements OnInit {
             max_temp_asic: [autotune.max_temp_asic, [Validators.required, Validators.min(1)]],
             vf_ratio_max: [autotune.vf_ratio_max],
             vf_ratio_min: [autotune.vf_ratio_min],
+            max_temp_vr: [autotune.max_temp_vr],
             auto_tune: [autotune.auto_tune ?? false]
           });
         },

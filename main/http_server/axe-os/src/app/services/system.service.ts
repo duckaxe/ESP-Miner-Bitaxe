@@ -198,6 +198,7 @@ export class SystemService {
       max_volt_asic: 1400,
       max_freq_asic: 1000,
       max_temp_asic: 65,
+      max_temp_vr: 85,
       auto_tune: false,
       osh_pow_limit: 0.2,
       osh_fan_limit: 5,
