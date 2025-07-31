@@ -1,146 +1,66 @@
-<ng-container>
-  <div class="card">
-    <form [formGroup]="autotuneForm" (ngSubmit)="updateAutotune()" *ngIf="autotuneForm">
-      <h3>Autotune Settings</h3>
-      <div class="card">
+<form [formGroup]="autotuneForm" *ngIf="autotuneForm">
+    <div class="card">
+      <h2>Autotune Settings</h2>
 
-        <!-- Auto Tune Hashrate -->
-        <div class="field grid p-fluid">
-          <label for="auto_tune" class="col-12 md:col-2 md:m-0">Auto Tune Hashrate
-            <i class="pi pi-info-circle text-xs px-1"
-              pTooltip="Enables automatic tuning of hashrate based on system conditions. This feature adjusts the hashrate dynamically to optimize performance and efficiency."></i>
-          </label>
-          <div class="col-12 md:col-10">
-            <p-checkbox type="checkbox" id="auto_tune" class="form-control" [(ngModel)]="autotuneForm.value.auto_tune"
-              formControlName="auto_tune" binary>
+      <p-message severity="warn" styleClass="w-full mb-4 border-round-sm" text="The following options should only be set by expert users"></p-message>
+
+      <div class="card">
+        <!-- Auto Tune Hashrate Checkbox -->
+        <div class="field-checkbox grid my-2">
+          <div class="col-1 md:col-10 md:flex-order-2">
+            <p-checkbox
+              name="auto_tune"
+              formControlName="auto_tune"
+              inputId="auto_tune"
+              binary>
             </p-checkbox>
           </div>
-        </div>
-
-         <!-- Power Limit Warning -->
-        <div class="field grid p-fluid">
-          <label for="power_limit_warning" class="col-12 md:col-2 md:m-0">Power Limit
-            <i class="pi pi-info-circle text-xs px-1"
-              pTooltip="Sets the maximum power limit in watts. This prevents the system from consuming more power than this threshold, helping to manage energy costs and prevent overheating."></i>
+          <label for="auto_tune" class="col-11 m-0 pl-3 md:col-2 md:flex-order-1 md:p-2">
+            Auto Tune <span class="white-space-nowrap">Hashrate
+              <i class="pi pi-info-circle text-xs px-1" pTooltip="Enables automatic tuning of hashrate based on system conditions. This feature adjusts the hashrate dynamically to optimize performance and efficiency."></i>
+            </span>
           </label>
-          <div class="col-12 md:col-10">
-            <p>Warning: Do not exceed your power supply limit.</p>
-            <p-checkbox id="power_limit_toggle" formControlName="power_limit_toggle">Unlock Power Limit Slider</p-checkbox>
-          </div>
         </div>
 
-        <!-- Power Limit -->
-        <div class="field grid p-fluid">
-          <label for="power_limit" class="col-12 md:col-2 md:m-0">&nbsp;</label>
-          <div class="col-12 md:col-10">
-            <p-slider id="power_limit" formControlName="power_limit"
-              [min]="10" [max]="40"
-              [disabled]="!autotuneForm.value.power_limit_toggle"> </p-slider>
-            <label>{{ autotuneForm.value.power_limit }}</label>
+        <!-- Slider Controls -->
+        <ng-container *ngIf="autotuneForm.get('auto_tune')?.value">
+          <div *ngFor="let slider of sliderConfigs" class="grid p-fluid my-2">
+            <label
+              [for]="slider.formControlName"
+              class="hidden md:flex md:col-2 md:m-0 md:align-items-baseline"
+              >
+              {{ slider.label }}
+              <i class="pi pi-info-circle text-xs px-1" [pTooltip]="slider.tooltip"></i>
+            </label>
+            <div class="col-12 md:col-10">
+              <label class="block mb-1">
+                <span class="md:hidden mr-1">{{ slider.label }}:</span>
+                {{ autotuneForm.value[slider.formControlName] }} {{ slider.unit }}
+              </label>
+              <p-slider
+                [id]="slider.formControlName"
+                [formControlName]="slider.formControlName"
+                [min]="slider.min"
+                [max]="slider.max"
+                [step]="slider.step"
+                >
+              </p-slider>
+            </div>
           </div>
-        </div>
-
-        <!-- Fan Limit -->
-        <div class="field grid p-fluid">
-          <label for="fan_limit" class="col-12 md:col-2 md:m-0">Fan Limit
-            <i class="pi pi-info-circle text-xs px-1"
-              pTooltip="Sets the maximum fan speed limit in percent. This ensures that fans do not exceed this speed, helping to control noise levels and reduce wear on the fans."></i>
-          </label>
-          <div class="col-12 md:col-10">
-            <p-slider id="fan_limit" formControlName="fan_limit" [min]="0" [max]="100"> </p-slider>
-            <label>{{ autotuneForm.value.fan_limit }}</label>
-          </div>
-        </div>
-
-        <!-- Overshot Power Limit -->
-        <div class="field grid p-fluid">
-          <label for="osh_pow_limit" class="col-12 md:col-2 md:m-0">Overshoot Power Limit
-            <i class="pi pi-info-circle text-xs px-1"
-              pTooltip="Maximum allowed power overshoot in watts. This provides a buffer for temporary spikes above the power limit, allowing for brief surges without triggering safety mechanisms."></i>
-          </label>
-          <div class="col-12 md:col-10">
-            <p-slider type="number" id="osh_pow_limit" formControlName="osh_pow_limit" [step]="0.1" [min]="0.0" [max]="2.2"
-              class="form-control"/>
-              <label>{{ autotuneForm.value.osh_pow_limit }}</label>
-          </div>
-        </div>
-
-        <!-- Overshot Fanspeed -->
-        <div class="field grid p-fluid">
-          <label for="osh_fan_limit" class="col-12 md:col-2 md:m-0">Overshoot Fanspeed
-            <i class="pi pi-info-circle text-xs px-1"
-              pTooltip="Maximum allowed fan speed overshoot in percent. This provides a buffer for temporary spikes above the fan limit, allowing for brief increases without triggering safety mechanisms."></i>
-          </label>
-          <div class="col-12 md:col-10">
-            <p-slider id="osh_fan_limit" formControlName="osh_fan_limit" [min]="0" [max]="100"> </p-slider>
-            <label>{{ autotuneForm.value.osh_fan_limit }}</label>
-          </div>
-        </div>
-
-        <!-- Max Voltage ASIC -->
-        <div class="field grid p-fluid">
-          <label for="max_volt_asic" class="col-12 md:col-2 md:m-0">Max Voltage ASIC
-            <i class="pi pi-info-circle text-xs px-1"
-              pTooltip="Maximum voltage for the ASIC in millivolts. This prevents over-voltage conditions that could damage hardware, ensuring safe operation within specified limits."></i>
-          </label>
-          <div class="col-12 md:col-10">
-            <p-slider id="max_volt_asic" formControlName="max_volt_asic" [min]="1000" [max]="1400"> </p-slider>
-            <label>{{ autotuneForm.value.max_volt_asic }}</label>
-          </div>
-        </div>
-
-        <!-- Max Frequency ASIC -->
-        <div class="field grid p-fluid">
-          <label for="max_freq_asic" class="col-12 md:col-2 md:m-0">Max Frequency ASIC
-            <i class="pi pi-info-circle text-xs px-1"
-              pTooltip="Maximum frequency for the ASIC in megahertz. This prevents overclocking beyond safe limits, ensuring stable and reliable performance."></i>
-          </label>
-          <div class="col-12 md:col-10">
-            <p-slider id="max_freq_asic" formControlName="max_freq_asic" [min]="400" [max]="1000"> </p-slider>
-            <label>{{ autotuneForm.value.max_freq_asic }}</label>
-          </div>
-        </div>
-
-        <!-- Max ASIC Temperature -->
-        <div class="field grid p-fluid">
-          <label for="max_temp_asic" class="col-12 md:col-2 md:m-0">Max Temperature ASIC
-            <i class="pi pi-info-circle text-xs px-1"
-              pTooltip="Maximum temperature for the ASIC in degrees Celsius. This ensures thermal safety, preventing hardware damage due to overheating."></i>
-          </label>
-          <div class="col-12 md:col-10">
-            <p-slider id="max_temp_asic" formControlName="max_temp_asic" [min]="20" [max]="80"> </p-slider>
-            <label>{{ autotuneForm.value.max_temp_asic }}</label>
-          </div>
-        </div>
-
-        <!-- Max V/F Ratio -->
-        <div class="field grid p-fluid">
-          <label for="vf_ratio_max" class="col-12 md:col-2 md:m-0">Max V/F Ratio
-            <i class="pi pi-info-circle text-xs px-1"
-              pTooltip="Sets the maximum allowable Voltage/Frequency ratio. This ratio is crucial for determining efficiency and power delivery to ASICs. A higher ratio can lead to overheating, while a lower one might not provide enough power."></i>
-          </label>
-          <div class="col-12 md:col-10">
-            <p-slider type="number" id="vf_ratio_max" formControlName="vf_ratio_max" [step]="0.01" [min]="2.0" [max]="2.2"
-              class="form-control" />
-              <label>{{ autotuneForm.value.vf_ratio_max }}</label>
-          </div>
-        </div>
-
-        <!-- Min V/F Ratio -->
-        <div class="field grid p-fluid">
-          <label for="vf_ratio_min" class="col-12 md:col-2 md:m-0">Min V/F Ratio
-            <i class="pi pi-info-circle text-xs px-1"
-              pTooltip="Sets the minimum allowable Voltage/Frequency ratio. This ratio affects energy efficiency and chip performance. Setting this too low could cause insufficient power supply, leading to performance degradation or system instability."></i>
-          </label>
-          <div class="col-12 md:col-10">
-            <p-slider type="number" id="vf_ratio_min" formControlName="vf_ratio_min" [step]="0.01" [min]="1.6" [max]="2.0"
-              class="form-control" />
-              <label>{{ autotuneForm.value.vf_ratio_min }}</label>
-          </div>
-        </div>
+        </ng-container>
 
       </div>
-      <button pButton [disabled]="!autotuneForm.valid" type="submit">Save</button>
-    </form>
-  </div>
-</ng-container>
+
+      <div class="flex mt-5 gap-3">
+        <button
+          pButton
+          class="btn btn-primary"
+          (click)="updateAutotune()"
+          [disabled]="!autotuneForm.dirty || autotuneForm.invalid"
+        >
+          Save
+        </button>
+      </div>
+
+    </div>
+  </form>
