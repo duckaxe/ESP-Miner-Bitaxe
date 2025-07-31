@@ -31,6 +31,7 @@ export class AutotuneComponent implements OnInit {
       osh_fan_limit: [5],
       vf_ratio_max: [2.2],
       vf_ratio_min: [1.76],
+      power_limit_toggle:[false],
     });
 
     // Load autotune settings from API and patch the form if available
