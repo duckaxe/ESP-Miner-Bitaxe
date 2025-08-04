@@ -29,10 +29,14 @@ auto_tune_settings AUTO_TUNE = {
     .vf_ratio_min = 1.76,
 };
 
+#define HASHRATE_HISTORY_SIZE 30
 double last_core_voltage_auto;
 double last_asic_frequency_auto;
 double last_hashrate_auto;
 double current_hashrate_auto;
+double hashrate_history[HASHRATE_HISTORY_SIZE];
+int history_index = 0;
+bool history_initialized = false;
 
 bool lastVoltageSet = false;
 const int waitTime = 30;
@@ -55,6 +59,21 @@ enum TuneState
 
 enum TuneState state;
 
+void update_hashrate_history(double new_value)
+{
+    // Initialize history if not already done
+    if (!history_initialized) {
+        for (int i = 0; i < HASHRATE_HISTORY_SIZE; i++) {
+            hashrate_history[i] = new_value;
+        }
+        history_initialized = true;
+    }
+
+    // Add new value to circular buffer
+    hashrate_history[history_index] = new_value;
+    history_index = (history_index + 1) % HASHRATE_HISTORY_SIZE;
+}
+
 void auto_tune_init(GlobalState * _GLOBAL_STATE)
 {
     GLOBAL_STATE = _GLOBAL_STATE;
@@ -76,6 +95,10 @@ void auto_tune_init(GlobalState * _GLOBAL_STATE)
     last_asic_frequency_auto = AUTO_TUNE.frequency;
     last_hashrate_auto = GLOBAL_STATE->SYSTEM_MODULE.current_hashrate;
     current_hashrate_auto = last_hashrate_auto;
+
+    // Initialize hashrate history
+    update_hashrate_history(last_hashrate_auto);
+
     state = sleep_before_warmup;
     waitCounter = 45 * 1000 / POLL_RATE;
 }
@@ -112,6 +135,31 @@ bool critical_limithit()
 bool hashrate_decreased()
 {
     return last_hashrate_auto > current_hashrate_auto;
+}
+
+
+
+bool hashrate_increased_since_last_set()
+{
+    if (!history_initialized) {
+        return false; // Not enough data yet
+    }
+
+    int last_set_index = history_index;
+
+    // Check if hashrate increased since that point
+    double last_value = hashrate_history[last_set_index];
+    bool increased = false;
+
+    for (int i = 1; i < HASHRATE_HISTORY_SIZE; i++) {
+        int idx = (last_set_index + i) % HASHRATE_HISTORY_SIZE;
+        if (hashrate_history[idx] > last_value) {
+            increased = true;
+            break;
+        }
+    }
+
+    return increased;
 }
 
 static inline double clamp(double val, double min, double max)
@@ -169,8 +217,17 @@ void dowork()
     freq_step = AUTO_TUNE.autotune_step_frequency;
     volt_step = AUTO_TUNE.step_volt;
 
-    if (hashrate_decreased())
+    // Update hashrate history with current value
+    update_hashrate_history(current_hashrate_auto);
+
+    // Check if hashrate increased since last voltage/frequency set
+    bool hashrate_increased = hashrate_increased_since_last_set();
+
+    // If hashrate didn't increase, switch the setting
+    if (!hashrate_increased) {
         lastVoltageSet = !lastVoltageSet;
+    }
+
     if (critical_limithit()) {
         last_asic_frequency_auto -= AUTO_TUNE.autotune_step_frequency;
         last_core_voltage_auto -= AUTO_TUNE.step_volt;
