@@ -9,6 +9,7 @@ typedef struct
     uint16_t fan_rpm;
     float chip_temp[6];
     float chip_temp_avg;
+    float chip_temp2_avg;
     float vr_temp;
     float voltage;
     float core_voltage;
