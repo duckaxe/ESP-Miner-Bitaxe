@@ -218,7 +218,7 @@ void dowork()
     volt_step = AUTO_TUNE.step_volt;
 
     // Update hashrate history with current value
-    update_hashrate_history(current_hashrate_auto);
+    
 
     // Check if hashrate increased since last voltage/frequency set
     bool hashrate_increased = hashrate_increased_since_last_set();
@@ -245,6 +245,7 @@ void dowork()
 void auto_tune(bool pid_control_fanspeed)
 {
     current_hashrate_auto = GLOBAL_STATE->SYSTEM_MODULE.current_hashrate;
+    update_hashrate_history(current_hashrate_auto);
 
     switch (state) {
     case sleep_before_warmup:
