@@ -87,7 +87,6 @@ void POWER_MANAGEMENT_task(void * pvParameters)
     auto_tune_init(GLOBAL_STATE);
     uint16_t last_core_voltage = 0.0;
 
-    float last_asic_frequency = power_management->frequency_value;
     while (1) {
 
         // Refresh PID setpoint from NVS in case it was changed via API
@@ -204,7 +203,7 @@ void POWER_MANAGEMENT_task(void * pvParameters)
 
         if (!auto_tune_get_auto_tune_hashrate()) {
             core_voltage = nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE, CONFIG_ASIC_VOLTAGE);
-            asic_frequency = nvs_config_get_u16(NVS_CONFIG_ASIC_FREQ, CONFIG_ASIC_FREQUENCY);
+            asic_frequency = nvs_config_get_u16(NVS_CONFIG_ASIC_FREQUENCY, CONFIG_ASIC_FREQUENCY);
         } else {
             auto_tune(pid_control_fanspeed);
             core_voltage = auto_tune_get_voltage();
