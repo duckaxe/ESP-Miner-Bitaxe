@@ -31,7 +31,7 @@ export class AutotuneComponent implements OnInit {
       max: 40,
       step: 1,
       unit: 'W',
-      tooltip: 'Enables automatic tuning of hashrate based on system conditions. This feature adjusts the hashrate dynamically to optimize performance and efficiency.'
+      tooltip: 'The maximum power limit that the miner is allowed to use, based on your power supply output. Default:25W'
     },
     {
       formControlName: 'fan_limit',
@@ -40,7 +40,7 @@ export class AutotuneComponent implements OnInit {
       max: 100,
       step: 1,
       unit: '%',
-      tooltip: 'Sets the maximum fan speed limit in percent. This ensures that fans do not exceed this speed, helping to control noise levels and reduce wear on the fans.'
+      tooltip: 'Sets the maximum fan speed limit in percent. This ensures that fans do not exceed this speed, helping to control noise levels and reduce wear on the fans. Default:75%'
     },
     {
       formControlName: 'osh_pow_limit',
@@ -49,7 +49,7 @@ export class AutotuneComponent implements OnInit {
       max: 2.2,
       step: 0.1,
       unit: 'W',
-      tooltip: 'Maximum allowed power overshoot in watts. This provides a buffer for temporary spikes above the power limit, allowing for brief surges without triggering safety mechanisms.'
+      tooltip: 'Maximum allowed power overshoot in watts. This provides a buffer for temporary spikes above the power limit, allowing for brief surges without triggering safety mechanisms. Default:0.2W'
     },
     {
       formControlName: 'osh_fan_limit',
@@ -58,7 +58,7 @@ export class AutotuneComponent implements OnInit {
       max: 100,
       step: 1,
       unit: '%',
-      tooltip: 'Maximum allowed fan speed overshoot in percent. This provides a buffer for temporary spikes above the fan limit, allowing for brief increases without triggering safety mechanisms.'
+      tooltip: 'Maximum allowed fan speed overshoot in percent. This provides a buffer for temporary spikes above the fan limit, allowing for brief increases without triggering safety mechanisms. Default:5%'
     },
     {
       formControlName: 'max_volt_asic',
@@ -67,7 +67,7 @@ export class AutotuneComponent implements OnInit {
       max: 1400,
       step: 1,
       unit: 'mV',
-      tooltip: 'Maximum voltage for the ASIC in millivolts. This prevents over-voltage conditions that could damage hardware, ensuring safe operation within specified limits.'
+      tooltip: 'Maximum voltage for the ASIC in millivolts. This prevents over-voltage conditions that could damage hardware, ensuring safe operation within specified limits. Default:1400mV'
     },
     {
       formControlName: 'max_freq_asic',
@@ -76,7 +76,7 @@ export class AutotuneComponent implements OnInit {
       max: 1000,
       step: 1,
       unit: 'MHz',
-      tooltip: 'Maximum frequency for the ASIC in megahertz. This prevents overclocking beyond safe limits, ensuring stable and reliable performance.'
+      tooltip: 'Maximum frequency for the ASIC in megahertz. This prevents overclocking beyond safe limits, ensuring stable and reliable performance. Default:1000MHz'
     },
     {
       formControlName: 'max_temp_asic',
@@ -85,7 +85,7 @@ export class AutotuneComponent implements OnInit {
       max: 80,
       step: 1,
       unit: '°C',
-      tooltip: 'Maximum temperature for the ASIC in degrees Celsius. This ensures thermal safety, preventing hardware damage due to overheating.'
+      tooltip: 'Maximum temperature for the ASIC in degrees Celsius. This ensures thermal safety, preventing hardware damage due to overheating. Default:60°C'
     },
     {
       formControlName: 'max_temp_vr',
@@ -94,7 +94,7 @@ export class AutotuneComponent implements OnInit {
       max: 90,
       step: 1,
       unit: '°C',
-      tooltip: 'Maximum temperature for the VoltageRegulator in degrees Celsius. This ensures thermal safety, preventing hardware damage due to overheating.'
+      tooltip: 'Maximum temperature for the VoltageRegulator in degrees Celsius. This ensures thermal safety, preventing hardware damage due to overheating. Default:85°C'
     },
     {
       formControlName: 'vf_ratio_max',
@@ -103,7 +103,7 @@ export class AutotuneComponent implements OnInit {
       max: 2.2,
       step: 0.01,
       unit: '',
-      tooltip: 'Sets the maximum allowable Voltage/Frequency ratio. This ratio is crucial for determining efficiency and power delivery to ASICs. A higher ratio can lead to overheating, while a lower one might not provide enough power.'
+      tooltip: 'This value sets an upper limit on the Voltage/Frequency ratio that the system is allowed to use. If this ratio is exceeded, the system will adjust the voltage or frequency to stay within this maximum threshold. Default:2.2'
     },
     {
       formControlName: 'vf_ratio_min',
@@ -112,7 +112,7 @@ export class AutotuneComponent implements OnInit {
       max: 2.0,
       step: 0.01,
       unit: '',
-      tooltip: 'Sets the minimum allowable Voltage/Frequency ratio. This ratio affects energy efficiency and chip performance. Setting this too low could cause insufficient power supply, leading to performance degradation or system instability.'
+      tooltip: ' This value sets a lower limit on the Voltage/Frequency ratio that the system is allowed to use. If this ratio falls below, the system will adjust the voltage or frequency to stay within this minimum threshold. Default:1.76'
     }
   ];
 
