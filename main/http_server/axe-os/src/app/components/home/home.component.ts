@@ -310,16 +310,16 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.temperatureData.push(element[idxTemperature]);
           this.powerData.push(element[idxPower]);
           this.dataLabel.push(new Date().getTime() - stats.currentTimestamp + element[idxTimestamp]);
-        this.frequencyData.push(element[4]);
-        this.voltageData.push(element[6]);
+          this.frequencyData.push(Number(element[4].toFixed(2)));
+          this.voltageData.push(Number(element[6].toFixed(2)));
 
           if (this.hashrateData.length >= 720) {
             this.hashrateData.shift();
             this.temperatureData.shift();
             this.powerData.shift();
             this.dataLabel.shift();
-          this.frequencyData.shift();
-          this.voltageData.shift();
+            this.frequencyData.shift();
+            this.voltageData.shift();
           }
         }),
         this.startGetLiveData();
@@ -336,12 +336,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       tap(info => {
         // Only collect and update chart data if there's no power fault
         if (!info.power_fault) {
+          info.frequency = Number(info.frequency.toFixed(2));
           this.hashrateData.push(info.hashRate * 1000000000);
           this.temperatureData.push(info.temp);
           this.powerData.push(info.power);
           this.dataLabel.push(new Date().getTime());
           this.frequencyData.push(info.frequency);
-          this.voltageData.push(info.coreVoltage);
+          this.voltageData.push(Number(info.coreVoltage.toFixed(2)));
 
           if ((this.hashrateData.length) >= 720) {
             this.hashrateData.shift();
