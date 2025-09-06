@@ -12,8 +12,8 @@ typedef struct
     float chip_temp2_avg;
     float vr_temp;
     float voltage;
-    float core_voltage;
-    float frequency_value;
+    double core_voltage;
+    double frequency_value;
     float power;
     float current;
 } PowerManagementModule;

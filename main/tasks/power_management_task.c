@@ -72,7 +72,7 @@ void POWER_MANAGEMENT_task(void * pvParameters)
 
     POWER_MANAGEMENT_init_frequency(power_management);
     
-    float last_asic_frequency = power_management->frequency_value;
+    double last_asic_frequency = power_management->frequency_value;
 
     pid_setPoint = (double)nvs_config_get_u16(NVS_CONFIG_TEMP_TARGET, pid_setPoint);
     min_fan_pct = (double)nvs_config_get_u16(NVS_CONFIG_MIN_FAN_SPEED, min_fan_pct);
@@ -85,7 +85,7 @@ void POWER_MANAGEMENT_task(void * pvParameters)
 
     vTaskDelay(500 / portTICK_PERIOD_MS);
     auto_tune_init(GLOBAL_STATE);
-    uint16_t last_core_voltage = 0.0;
+    double last_core_voltage = 0.0;
 
     while (1) {
 
@@ -198,8 +198,8 @@ void POWER_MANAGEMENT_task(void * pvParameters)
             Thermal_set_fan_percent(&GLOBAL_STATE->DEVICE_CONFIG, (float) fs / 100.0);
         }
 
-        float core_voltage = 0;
-        float asic_frequency = 0;
+        double core_voltage = 0;
+        double asic_frequency = 0;
 
         if (!auto_tune_get_auto_tune_hashrate()) {
             core_voltage = nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE, CONFIG_ASIC_VOLTAGE);
@@ -211,14 +211,14 @@ void POWER_MANAGEMENT_task(void * pvParameters)
         }
 
         if (core_voltage != last_core_voltage) {
-            ESP_LOGI(TAG, "setting new vcore voltage to %fmV", core_voltage);
+            ESP_LOGI(TAG, "set vcore voltage from %fmV to %fmV", last_core_voltage, core_voltage);
             VCORE_set_voltage(GLOBAL_STATE, (double) core_voltage / 1000.0);
             last_core_voltage = core_voltage;
             power_management->core_voltage = core_voltage;
         }
 
         if (asic_frequency != last_asic_frequency) {
-            ESP_LOGI(TAG, "New ASIC frequency requested: %g MHz (current: %g MHz)", asic_frequency, last_asic_frequency);
+            ESP_LOGI(TAG, "set frequency from %g MHz to  %g MHz", last_asic_frequency, asic_frequency);
             
             bool success = ASIC_set_frequency(GLOBAL_STATE, asic_frequency);
             
