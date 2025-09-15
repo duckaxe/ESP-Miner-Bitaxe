@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-
+import { ISystemInfo } from 'src/models/ISystemInfo';
 import { LoadingService } from 'src/app/services/loading.service';
 import { SystemService } from 'src/app/services/system.service';
 import { ToastrService } from 'ngx-toastr';
@@ -172,7 +172,7 @@ export class AutotuneComponent implements OnInit {
     });
   }
 
-  private updateSliderMinForPid(info: any): void {
+  private updateSliderMinForPid(info: ISystemInfo): void {
     // Check if PID is active (autofanspeed = 1)
     const isPidActive = info.autofanspeed === 1;
 
