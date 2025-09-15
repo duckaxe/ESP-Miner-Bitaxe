@@ -15,8 +15,8 @@ typedef struct
     uint8_t autotune_read_tick;
     uint16_t max_voltage_asic;
     uint16_t max_frequency_asic;
-    uint8_t max_asic_temperatur;
-    uint16_t max_vr_temperatur;
+    uint8_t max_temp_asic;
+    uint16_t max_temp_vr;
     double frequency;
     double voltage;
     bool auto_tune_hashrate;

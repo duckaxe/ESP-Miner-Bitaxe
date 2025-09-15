@@ -45,13 +45,13 @@
 #define NVS_CONFIG_KEY_FAN_LIMIT "fan_limit"
 #define NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC "max_volt_asic"
 #define NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC "max_freq_asic"
-#define NVS_CONFIG_KEY_MAX_ASIC_TEMPERATUR "max_temp_asic"
+#define NVS_CONFIG_KEY_MAX_TEMP_ASIC "max_temp_asic"
 #define NVS_CONFIG_KEY_AUTO_TUNE_ENABLE "auto_tune"
 #define NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT "osh_pow_limit"
 #define NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT "osh_fan_limit"
 #define NVS_CONFIG_KEY_VF_RATIO_MAX "vf_ratio_max"
 #define NVS_CONFIG_KEY_VF_RATIO_MIN "vf_ratio_min"
-#define NVS_CONFIG_KEY_MAX_VR_TEMPERATUR "max_temp_vr"
+#define NVS_CONFIG_KEY_MAX_TEMP_VR "max_temp_vr"
 
 // Theme configuration
 #define NVS_CONFIG_THEME_SCHEME "themescheme"
