@@ -85,7 +85,7 @@ export class AutotuneComponent implements OnInit {
       max: 80,
       step: 1,
       unit: '°C',
-      tooltip: 'Maximum temperature for the ASIC in degrees Celsius. This ensures thermal safety, preventing hardware damage due to overheating. Default:60°C'
+      tooltip: 'Maximum temperature allowed for the ASIC in degrees Celsius. This ensures safe operation and prevents overheating that could damage hardware or affect performance. Default:65°C'
     },
     {
       formControlName: 'max_temp_vr',
@@ -121,13 +121,26 @@ export class AutotuneComponent implements OnInit {
     private loadingService: LoadingService,
     private systemService: SystemService,
     private toastr: ToastrService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadAutotuneSettings();
   }
 
   private loadAutotuneSettings(): void {
+
+    this.systemService.getInfo()
+      .pipe(this.loadingService.lockUIUntilComplete())
+      .subscribe({
+        next: (info) => {
+          // Update the slider config with dynamic minimum value if PID is active
+          this.updateSliderMinForPid(info);
+        },
+        error: () => {
+          this.toastr.error('Failed to load getInfog settings');
+        }
+      });
+
     this.systemService.getAutotune()
       .pipe(this.loadingService.lockUIUntilComplete())
       .subscribe({
@@ -158,4 +171,22 @@ export class AutotuneComponent implements OnInit {
       error: (err: HttpErrorResponse) => this.toastr.error(`Could not save autotune settings. ${err.message}`)
     });
   }
+
+  private updateSliderMinForPid(info: any): void {
+    // Check if PID is active (autofanspeed = 1)
+    const isPidActive = info.autofanspeed === 1;
+
+    // If PID is active, set the minimum value to (temptarget + 1)
+    // Otherwise keep the default minimum of 20
+    const minTemp = isPidActive ? (info.temptarget + 1) : 20;
+
+    // Update the slider configuration in our component
+    this.sliderConfigs.forEach(config => {
+      if (config.formControlName === 'max_temp_asic') {
+        config.min = minTemp;
+      }
+    });
+  }
 }
+
+
