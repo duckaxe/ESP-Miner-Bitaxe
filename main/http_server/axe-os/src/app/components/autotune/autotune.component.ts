@@ -55,7 +55,7 @@ export class AutotuneComponent implements OnInit {
       formControlName: 'osh_fan_limit',
       label: 'Overshoot Fanspeed',
       min: 0,
-      max: 100,
+      max: 25,
       step: 1,
       unit: '%',
       tooltip: 'Maximum allowed fan speed overshoot in percent. This provides a buffer for temporary spikes above the fan limit, allowing for brief increases without triggering safety mechanisms. Default:5%'
@@ -179,11 +179,14 @@ export class AutotuneComponent implements OnInit {
     // If PID is active, set the minimum value to (temptarget + 1)
     // Otherwise keep the default minimum of 20
     const minTemp = isPidActive ? (info.temptarget + 1) : 20;
-
+    const minFanspeed = isPidActive ? (info.fanspeed + 1) : 20;
     // Update the slider configuration in our component
     this.sliderConfigs.forEach(config => {
       if (config.formControlName === 'max_temp_asic') {
         config.min = minTemp;
+      }
+      if (config.formControlName === 'fan_limit') {
+        config.min = minFanspeed;
       }
     });
   }

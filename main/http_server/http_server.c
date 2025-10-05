@@ -614,9 +614,19 @@ static esp_err_t PATCH_update_settings(httpd_req_t * req)
     }
     if ((item = cJSON_GetObjectItem(root, "minFanSpeed")) != NULL) {
         nvs_config_set_u16(NVS_CONFIG_MIN_FAN_SPEED, item->valueint);
+        if(AUTO_TUNE.fan_limit < item->valueint)
+        {
+            AUTO_TUNE.fan_limit = item->valueint+1;
+            nvs_config_set_u16(NVS_CONFIG_KEY_FAN_LIMIT, (uint16_t)AUTO_TUNE.fan_limit);
+        }
     }
     if ((item = cJSON_GetObjectItem(root, "temptarget")) != NULL) {
         nvs_config_set_u16(NVS_CONFIG_TEMP_TARGET, item->valueint);
+        if(AUTO_TUNE.max_temp_asic < item->valueint)
+        {
+            AUTO_TUNE.max_temp_asic = item->valueint +1;
+            nvs_config_set_u16(NVS_CONFIG_KEY_MAX_TEMP_ASIC, (uint16_t)AUTO_TUNE.max_temp_asic);
+        }
     }
     if ((item = cJSON_GetObjectItem(root, "statsFrequency")) != NULL) {
         nvs_config_set_u16(NVS_CONFIG_STATISTICS_FREQUENCY, item->valueint);
