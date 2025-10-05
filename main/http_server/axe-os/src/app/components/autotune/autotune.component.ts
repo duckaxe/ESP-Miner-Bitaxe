@@ -82,7 +82,7 @@ export class AutotuneComponent implements OnInit {
       formControlName: 'max_temp_asic',
       label: 'Max Temperature ASIC',
       min: 20,
-      max: 80,
+      max: 70,
       step: 1,
       unit: '°C',
       tooltip: 'Maximum temperature allowed for the ASIC in degrees Celsius. This ensures safe operation and prevents overheating that could damage hardware or affect performance. Default:65°C'
