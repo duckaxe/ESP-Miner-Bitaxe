@@ -881,6 +881,7 @@ static esp_err_t GET_system_statistics(httpd_req_t * req)
     if (dataSelection[SRC_FAN_RPM]) { cJSON_AddItemToArray(labelArray, cJSON_CreateString(STATS_LABEL_FAN_RPM)); }
     if (dataSelection[SRC_WIFI_RSSI]) { cJSON_AddItemToArray(labelArray, cJSON_CreateString(STATS_LABEL_WIFI_RSSI)); }
     if (dataSelection[SRC_FREE_HEAP]) { cJSON_AddItemToArray(labelArray, cJSON_CreateString(STATS_LABEL_FREE_HEAP)); }
+    if (dataSelection[SRC_FREQUENCY]) { cJSON_AddItemToArray(labelArray, cJSON_CreateString(STATS_LABEL_FREQUENCY)); }
     cJSON_AddItemToArray(labelArray, cJSON_CreateString(STATS_LABEL_TIMESTAMP));
 
     cJSON_AddItemToObject(root, "labels", labelArray);
@@ -907,10 +908,8 @@ static esp_err_t GET_system_statistics(httpd_req_t * req)
             if (dataSelection[SRC_FAN_RPM]) { cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.fanRPM)); }
             if (dataSelection[SRC_WIFI_RSSI]) { cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.wifiRSSI)); }
             if (dataSelection[SRC_FREE_HEAP]) { cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.freeHeap)); }
+            if (dataSelection[SRC_FREQUENCY]) { cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.frequency)); }
             cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.timestamp));
-                cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.frequency));
-                cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.voltage));
-                cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.core_voltage));
 
             cJSON_AddItemToArray(statsArray, valueArray);
             prebuffer++;
