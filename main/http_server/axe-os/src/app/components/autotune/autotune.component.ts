@@ -179,7 +179,7 @@ export class AutotuneComponent implements OnInit {
     // If PID is active, set the minimum value to (temptarget + 1)
     // Otherwise keep the default minimum of 20
     const minTemp = isPidActive ? (info.temptarget + 1) : 20;
-    const minFanspeed = isPidActive ? (info.fanspeed + 1) : 20;
+    const minFanspeed = isPidActive ? (info.minFanSpeed + 1) : 20;
     // Update the slider configuration in our component
     this.sliderConfigs.forEach(config => {
       if (config.formControlName === 'max_temp_asic') {
