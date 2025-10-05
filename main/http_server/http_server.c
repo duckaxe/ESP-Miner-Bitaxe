@@ -1187,7 +1187,7 @@ esp_err_t POST_autotune_update(httpd_req_t * req)
     }
 
     cJSON_Delete(root);
-
+    httpd_resp_send_chunk(req, NULL, 0);
     return ESP_OK;
 }
 esp_err_t start_rest_server(void * pvParameters)
