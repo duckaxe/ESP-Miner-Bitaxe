@@ -199,7 +199,7 @@ void POWER_MANAGEMENT_task(void * pvParameters)
             core_voltage = nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE, CONFIG_ASIC_VOLTAGE);
             asic_frequency = nvs_config_get_u16(NVS_CONFIG_ASIC_FREQUENCY, CONFIG_ASIC_FREQUENCY);
         } else {
-            auto_tune(pid_control_fanspeed);
+            auto_tune();
             core_voltage = auto_tune_get_voltage();
             asic_frequency = auto_tune_get_frequency();
         }

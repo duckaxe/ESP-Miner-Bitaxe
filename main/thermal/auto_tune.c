@@ -103,9 +103,9 @@ void auto_tune_init(GlobalState * _GLOBAL_STATE)
     waitCounter = 45 * 1000 / POLL_RATE;
 }
 
-bool waitForStartUp(bool pid_control_fanspeed)
+bool waitForStartUp()
 {
-    return current_hashrate_auto > 0 && pid_control_fanspeed && waitCounter <= 0;
+    return current_hashrate_auto > 0 && waitCounter <= 0;
 }
 
 bool can_increase_values()
@@ -242,7 +242,7 @@ void dowork()
     AUTO_TUNE.frequency = last_asic_frequency_auto;
 }
 
-void auto_tune(bool pid_control_fanspeed)
+void auto_tune()
 {
     current_hashrate_auto = GLOBAL_STATE->SYSTEM_MODULE.current_hashrate;
     update_hashrate_history(current_hashrate_auto);
@@ -258,7 +258,7 @@ void auto_tune(bool pid_control_fanspeed)
             break;
         }
 
-        if (waitForStartUp(pid_control_fanspeed)) {
+        if (waitForStartUp()) {
             state = warmup;
         }
         break;

@@ -28,7 +28,7 @@ typedef struct
 
 extern auto_tune_settings AUTO_TUNE;
 void auto_tune_init(GlobalState * gs);
-void auto_tune(bool pid_control_fanspeed);
+void auto_tune();
 double auto_tune_get_frequency();
 double auto_tune_get_voltage();
 bool auto_tune_get_auto_tune_hashrate();
