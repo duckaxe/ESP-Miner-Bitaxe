@@ -14,11 +14,12 @@ typedef struct
     float voltage;
     double core_voltage;
     double frequency_value;
+    float expected_hashrate;
     float power;
     float current;
 } PowerManagementModule;
 
-void POWER_MANAGEMENT_init_frequency(PowerManagementModule * power_management);
+void POWER_MANAGEMENT_init_frequency(void * pvParameters);
 
 void POWER_MANAGEMENT_task(void * pvParameters);
 
