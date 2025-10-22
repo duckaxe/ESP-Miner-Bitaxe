@@ -457,6 +457,12 @@ static const lv_font_fmt_txt_glyph_dsc_t glyph_dsc[] = {
  *  CHARACTER MAPPING
  *--------------------*/
 
+#define EXTRA_CHARACTERS_RANGE_STATE 128
+
+static const uint16_t extra_characters_list_1[] = {
+    0x00B0 - EXTRA_CHARACTERS_RANGE_STATE,
+};
+
 #define UNICODE_RANGE_STATE 0x2191
 
 static const uint16_t unicode_list_1[] = {
@@ -472,22 +478,12 @@ static const lv_font_fmt_txt_cmap_t cmaps[] =
         .unicode_list = NULL, .glyph_id_ofs_list = NULL, .list_length = 0, .type = LV_FONT_FMT_TXT_CMAP_FORMAT0_TINY
     },
     {
-        .range_start = 0x00B0,
-        .range_length = 1,
-        .glyph_id_start = 97,
-        .unicode_list = NULL,
-        .glyph_id_ofs_list = NULL,
-        .list_length = 0,
-        .type = LV_FONT_FMT_TXT_CMAP_FORMAT0_TINY,
+        .range_start = EXTRA_CHARACTERS_RANGE_STATE, .range_length = 128, .glyph_id_start = 97,
+        .unicode_list = extra_characters_list_1, .glyph_id_ofs_list = NULL, .list_length = 1, .type = LV_FONT_FMT_TXT_CMAP_SPARSE_TINY
     },
     {
-        .range_start = 0x2009,
-        .range_length = 1,
-        .glyph_id_start = 98,
-        .unicode_list = NULL,
-        .glyph_id_ofs_list = NULL,
-        .list_length = 0,
-        .type = LV_FONT_FMT_TXT_CMAP_FORMAT0_TINY,
+        .range_start = 0x2009, .range_length = 1, .glyph_id_start = 98,
+        .unicode_list = NULL, .glyph_id_ofs_list = NULL, .list_length = 0, .type = LV_FONT_FMT_TXT_CMAP_FORMAT0_TINY,
     },
     {
         .range_start = UNICODE_RANGE_STATE, .range_length = 5, .glyph_id_start = 99,
