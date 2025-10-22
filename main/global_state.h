@@ -18,7 +18,7 @@
 #define FALLBACK_STRATUM_USER CONFIG_FALLBACK_STRATUM_USER
 
 #define HISTORY_LENGTH 100
-#define DIFF_STRING_SIZE 10
+#define DIFF_STRING_SIZE 12
 
 typedef struct {
     char message[64];
