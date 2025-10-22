@@ -30,8 +30,8 @@ auto_tune_settings AUTO_TUNE = {
 };
 
 #define HASHRATE_HISTORY_SIZE 30
-double last_core_voltage_auto;
-double last_asic_frequency_auto;
+float last_core_voltage_auto;
+float last_asic_frequency_auto;
 double last_hashrate_auto;
 double current_hashrate_auto;
 double hashrate_history[HASHRATE_HISTORY_SIZE];
@@ -41,8 +41,8 @@ bool history_initialized = false;
 bool lastVoltageSet = false;
 const int waitTime = 30;
 int waitCounter = 0;
-double freq_step;
-double volt_step;
+float freq_step;
+float volt_step;
 GlobalState * GLOBAL_STATE;
 
 #define INIT_FREQ 525
@@ -84,11 +84,11 @@ void auto_tune_init(GlobalState * _GLOBAL_STATE)
     AUTO_TUNE.max_voltage_asic = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC, AUTO_TUNE.max_voltage_asic);
     AUTO_TUNE.max_frequency_asic = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC, AUTO_TUNE.max_frequency_asic);
     AUTO_TUNE.max_temp_asic = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_TEMP_ASIC, AUTO_TUNE.max_temp_asic);
-    AUTO_TUNE.auto_tune_hashrate = nvs_config_get_bool(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, AUTO_TUNE.auto_tune_hashrate);
-    AUTO_TUNE.overshot_power_limit = nvs_config_get_double(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, AUTO_TUNE.overshot_power_limit);
+    AUTO_TUNE.auto_tune_hashrate = nvs_config_get_u16(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, AUTO_TUNE.auto_tune_hashrate);
+    AUTO_TUNE.overshot_power_limit = nvs_config_get_float(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, AUTO_TUNE.overshot_power_limit);
     AUTO_TUNE.overshot_fanspeed = nvs_config_get_u16(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT, AUTO_TUNE.overshot_fanspeed);
-    AUTO_TUNE.vf_ratio_max = nvs_config_get_double(NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
-    AUTO_TUNE.vf_ratio_min = nvs_config_get_double(NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
+    AUTO_TUNE.vf_ratio_max = nvs_config_get_float(NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
+    AUTO_TUNE.vf_ratio_min = nvs_config_get_float(NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
     AUTO_TUNE.max_temp_vr = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_TEMP_VR, AUTO_TUNE.max_temp_vr);
 
     last_core_voltage_auto = AUTO_TUNE.voltage;
@@ -284,12 +284,12 @@ void auto_tune()
     last_hashrate_auto = current_hashrate_auto;
 }
 
-double auto_tune_get_frequency()
+float auto_tune_get_frequency()
 {
     return AUTO_TUNE.frequency;
 }
 
-double auto_tune_get_voltage()
+float auto_tune_get_voltage()
 {
     return AUTO_TUNE.voltage;
 }

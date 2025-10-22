@@ -84,7 +84,7 @@ void POWER_MANAGEMENT_task(void * pvParameters)
 
     POWER_MANAGEMENT_init_frequency(GLOBAL_STATE);
     
-    double last_asic_frequency = power_management->frequency_value;
+    float last_asic_frequency = power_management->frequency_value;
 
     pid_setPoint = (double)nvs_config_get_u16(NVS_CONFIG_TEMP_TARGET, pid_setPoint);
     min_fan_pct = (double)nvs_config_get_u16(NVS_CONFIG_MIN_FAN_SPEED, min_fan_pct);
@@ -97,7 +97,7 @@ void POWER_MANAGEMENT_task(void * pvParameters)
 
     vTaskDelay(500 / portTICK_PERIOD_MS);
     auto_tune_init(GLOBAL_STATE);
-    double last_core_voltage = 0.0;
+    float last_core_voltage = 0.0;
 
     while (1) {
 
@@ -204,8 +204,8 @@ void POWER_MANAGEMENT_task(void * pvParameters)
             Thermal_set_fan_percent(&GLOBAL_STATE->DEVICE_CONFIG, (float) fs / 100.0);
         }
 
-        double core_voltage = 0;
-        double asic_frequency = 0;
+        float core_voltage = 0;
+        float asic_frequency = 0;
 
         if (!auto_tune_get_auto_tune_hashrate()) {
             core_voltage = nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE, CONFIG_ASIC_VOLTAGE);

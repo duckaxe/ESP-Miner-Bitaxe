@@ -82,10 +82,6 @@ uint64_t nvs_config_get_u64(const char * key, const uint64_t default_value);
 void nvs_config_set_u64(const char * key, const uint64_t value);
 float nvs_config_get_float(const char *key, float default_value);
 void nvs_config_set_float(const char *key, float value);
-double nvs_config_get_double(const char * key, const double default_value);
-void nvs_config_set_double(const char * key, const double value);
-bool nvs_config_get_bool(const char * key, const bool default_value);
-void nvs_config_set_bool(const char * key, const bool value);
 void nvs_config_commit(void);
 
 #endif // MAIN_NVS_CONFIG_H
