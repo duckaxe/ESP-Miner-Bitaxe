@@ -457,12 +457,6 @@ static const lv_font_fmt_txt_glyph_dsc_t glyph_dsc[] = {
  *  CHARACTER MAPPING
  *--------------------*/
 
-#define EXTRA_CHARACTERS_RANGE_STATE 128
-
-static const uint16_t extra_characters_list_1[] = {
-    0x00B0 - EXTRA_CHARACTERS_RANGE_STATE,
-};
-
 #define UNICODE_RANGE_STATE 0x2191
 
 static const uint16_t unicode_list_1[] = {
