@@ -318,9 +318,9 @@ void suffixString(uint64_t val, char * buf, size_t bufsiz, int sigdigits)
 
     if (!sigdigits) {
         if (decimal)
-            snprintf(buf, bufsiz, "%.2f %s", dval, suffix);
+            snprintf(buf, bufsiz, "%.2f\xE2\x80\x89%s", dval, suffix);
         else
-            snprintf(buf, bufsiz, "%d %s", (unsigned int) dval, suffix);
+            snprintf(buf, bufsiz, "%d\xE2\x80\x89%s", (unsigned int) dval, suffix);
     } else {
         /* Always show sigdigits + 1, padded on right with zeroes
          * followed by suffix */
