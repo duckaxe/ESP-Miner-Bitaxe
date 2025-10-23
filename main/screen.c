@@ -455,7 +455,7 @@ static void screen_update_cb(lv_timer_t * timer)
             lv_label_set_long_mode(stats_difficulty_label, LV_LABEL_LONG_SCROLL_CIRCULAR);
             lv_label_set_text_fmt(stats_difficulty_label, "Best: %s   !!! BLOCK FOUND !!!", module->best_session_diff_string);
         } else {
-            lv_label_set_text(stats_difficulty_label, "Best: 39.36 M/739.76 M");
+            lv_label_set_text(stats_difficulty_label, "Best: 839.36 M/739.76 M");
         }
         current_difficulty = module->best_session_nonce_diff;
     }
