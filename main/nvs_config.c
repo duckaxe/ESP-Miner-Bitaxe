@@ -38,8 +38,8 @@ static const char * TAG = "nvs_config";
 
 static QueueHandle_t nvs_save_queue = NULL;
 static nvs_handle_t handle;
-
-static Settings settings[NVS_CONFIG_COUNT] = {
+//removed NVS_CONFIG_COUNT to have the ability to control the settings read by http loop
+static Settings settings[] = {
     [NVS_CONFIG_WIFI_SSID]                             = {.nvs_key_name = "wifissid",        .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_ESP_WIFI_SSID},                .rest_name = "ssid",                               .min = 1,  .max = 32},
     [NVS_CONFIG_WIFI_PASS]                             = {.nvs_key_name = "wifipass",        .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_ESP_WIFI_PASSWORD},            .rest_name = "wifiPass",                           .min = 1,  .max = 63},
     [NVS_CONFIG_HOSTNAME]                              = {.nvs_key_name = "hostname",        .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_LWIP_LOCAL_HOSTNAME},          .rest_name = "hostname",                           .min = 1,  .max = 32},
@@ -97,6 +97,18 @@ static Settings settings[NVS_CONFIG_COUNT] = {
     [NVS_CONFIG_INA260]                                = {.nvs_key_name = "INA260",          .type = TYPE_BOOL},
     [NVS_CONFIG_TPS546]                                = {.nvs_key_name = "TPS546",          .type = TYPE_BOOL},
     [NVS_CONFIG_POWER_CONSUMPTION_TARGET]              = {.nvs_key_name = "power_cons_tgt",  .type = TYPE_U16},
+
+    [NVS_CONFIG_KEY_POWER_LIMIT]                       = {.nvs_key_name = "power_limit", .type = TYPE_FLOAT},
+    [NVS_CONFIG_KEY_FAN_LIMIT]                         = {.nvs_key_name = "fan_limit", .type = TYPE_U16},
+    [NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC]                  = {.nvs_key_name = "max_volt_asic", .type = TYPE_U16},
+    [NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC]                = {.nvs_key_name = "max_freq_asic", .type = TYPE_U16},
+    [NVS_CONFIG_KEY_MAX_TEMP_ASIC]                     = {.nvs_key_name = "max_temp_asic", .type = TYPE_U16},
+    [NVS_CONFIG_KEY_AUTO_TUNE_ENABLE]                  = {.nvs_key_name = "auto_tune", .type = TYPE_BOOL},
+    [NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT]              = {.nvs_key_name = "osh_pow_limit", .type = TYPE_FLOAT},
+    [NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT]                = {.nvs_key_name = "osh_fan_limit", .type = TYPE_U16},
+    [NVS_CONFIG_KEY_VF_RATIO_MAX]                      = {.nvs_key_name = "vf_ratio_max", .type = TYPE_FLOAT},
+    [NVS_CONFIG_KEY_VF_RATIO_MIN]                      = {.nvs_key_name = "vf_ratio_min", .type = TYPE_FLOAT},
+    [NVS_CONFIG_KEY_MAX_TEMP_VR]                       = {.nvs_key_name = "max_temp_vr", .type = TYPE_U16}
 };
 
 Settings *nvs_config_get_settings(NvsConfigKey key)

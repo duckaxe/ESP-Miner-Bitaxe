@@ -1161,17 +1161,17 @@ esp_err_t GET_autotune_info(httpd_req_t * req)
     }
 
     cJSON *root = cJSON_CreateObject();
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_POWER_LIMIT, AUTO_TUNE.power_limit);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_FAN_LIMIT, AUTO_TUNE.fan_limit);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC, AUTO_TUNE.max_voltage_asic);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC, AUTO_TUNE.max_frequency_asic);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_MAX_TEMP_ASIC, AUTO_TUNE.max_temp_asic);
-    cJSON_AddBoolToObject(root, NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, AUTO_TUNE.auto_tune_hashrate);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, AUTO_TUNE.overshot_power_limit);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT, AUTO_TUNE.overshot_fanspeed);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
-    cJSON_AddNumberToObject(root, NVS_CONFIG_KEY_MAX_TEMP_VR, AUTO_TUNE.max_temp_vr);
+    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_POWER_LIMIT)->nvs_key_name, AUTO_TUNE.power_limit);
+    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_FAN_LIMIT)->nvs_key_name, AUTO_TUNE.fan_limit);
+    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC)->nvs_key_name, AUTO_TUNE.max_voltage_asic);
+    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC)->nvs_key_name, AUTO_TUNE.max_frequency_asic);
+    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_MAX_TEMP_ASIC)->nvs_key_name, AUTO_TUNE.max_temp_asic);
+    cJSON_AddBoolToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE)->nvs_key_name, AUTO_TUNE.auto_tune_hashrate);
+    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT)->nvs_key_name, AUTO_TUNE.overshot_power_limit);
+    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT)->nvs_key_name, AUTO_TUNE.overshot_fanspeed);
+    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_VF_RATIO_MAX)->nvs_key_name, AUTO_TUNE.vf_ratio_max);
+    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_VF_RATIO_MIN)->nvs_key_name, AUTO_TUNE.vf_ratio_min);
+    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_MAX_TEMP_VR)->nvs_key_name, AUTO_TUNE.max_temp_vr);
 
     const char *response = cJSON_Print(root);
     httpd_resp_sendstr(req, response);
@@ -1214,47 +1214,47 @@ esp_err_t POST_autotune_update(httpd_req_t * req)
     }
 
     cJSON *item;
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_POWER_LIMIT)) && cJSON_IsNumber(item)) {
+    if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_POWER_LIMIT)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.power_limit = item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_POWER_LIMIT, (uint16_t)AUTO_TUNE.power_limit);
     }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_FAN_LIMIT)) && cJSON_IsNumber(item)) {
+    if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_FAN_LIMIT)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.fan_limit = item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_FAN_LIMIT, (uint16_t)AUTO_TUNE.fan_limit);
     }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC)) && cJSON_IsNumber(item)) {
+    if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.max_voltage_asic = item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC, (uint16_t)AUTO_TUNE.max_voltage_asic);
     }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC)) && cJSON_IsNumber(item)) {
+    if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.max_frequency_asic = item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC, (uint16_t)AUTO_TUNE.max_frequency_asic);
     }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_MAX_TEMP_ASIC)) && cJSON_IsNumber(item)) {
+    if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_MAX_TEMP_ASIC)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.max_temp_asic = item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_MAX_TEMP_ASIC, (uint16_t)AUTO_TUNE.max_temp_asic);
     }
-        if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_AUTO_TUNE_ENABLE)) && cJSON_IsBool(item)) {
+        if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE)->nvs_key_name)) && cJSON_IsBool(item)) {
         AUTO_TUNE.auto_tune_hashrate = item->valueint;
         nvs_config_set_u16(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, (bool)AUTO_TUNE.auto_tune_hashrate);
     }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT)) && cJSON_IsNumber(item)) {
+    if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.overshot_power_limit = item->valuedouble;
         nvs_config_set_float(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, AUTO_TUNE.overshot_power_limit);
     }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT)) && cJSON_IsNumber(item)) {
+    if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.overshot_fanspeed = (uint16_t)item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT, (uint16_t)AUTO_TUNE.overshot_fanspeed);
     }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_VF_RATIO_MAX)) && cJSON_IsNumber(item)) {
+    if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_VF_RATIO_MAX)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.vf_ratio_max = item->valuedouble;
         nvs_config_set_float(NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
     }
-    if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_VF_RATIO_MIN)) && cJSON_IsNumber(item)) {
+    if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_VF_RATIO_MIN)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.vf_ratio_min = item->valuedouble;
         nvs_config_set_float(NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
     }
-     if ((item = cJSON_GetObjectItem(root, NVS_CONFIG_KEY_MAX_TEMP_VR)) && cJSON_IsNumber(item)) {
+     if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_MAX_TEMP_VR)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.max_temp_vr = (uint16_t)item->valueint;
         nvs_config_set_u16(NVS_CONFIG_KEY_MAX_TEMP_VR, (uint16_t)AUTO_TUNE.max_temp_vr);
     }

@@ -145,7 +145,7 @@ void POWER_MANAGEMENT_task(void * pvParameters)
         }
 
         //enable the PID auto control for the FAN if set
-        bool pid_control_fanspeed = nvs_config_get_u16(NVS_CONFIG_AUTO_FAN_SPEED, 1) == 1;
+        bool pid_control_fanspeed = nvs_config_get_u16(NVS_CONFIG_AUTO_FAN_SPEED) == 1;
         if (pid_control_fanspeed) {
             if (power_management->chip_temp_avg >= 0) { // Ignore invalid temperature readings (-1)
                 if (power_management->chip_temp2_avg > 0) {
@@ -221,8 +221,8 @@ void POWER_MANAGEMENT_task(void * pvParameters)
         float asic_frequency = 0;
 
         if (!auto_tune_get_auto_tune_hashrate()) {
-            core_voltage = nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE, CONFIG_ASIC_VOLTAGE);
-            asic_frequency = nvs_config_get_u16(NVS_CONFIG_ASIC_FREQUENCY, CONFIG_ASIC_FREQUENCY);
+            core_voltage = nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE);
+            asic_frequency = nvs_config_get_u16(NVS_CONFIG_ASIC_FREQUENCY);
         } else {
             auto_tune();
             core_voltage = auto_tune_get_voltage();

@@ -77,19 +77,19 @@ void update_hashrate_history(double new_value)
 void auto_tune_init(GlobalState * _GLOBAL_STATE)
 {
     GLOBAL_STATE = _GLOBAL_STATE;
-    AUTO_TUNE.frequency = nvs_config_get_u16(NVS_CONFIG_ASIC_FREQUENCY, AUTO_TUNE.frequency);
-    AUTO_TUNE.voltage = nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE, AUTO_TUNE.voltage);
-    AUTO_TUNE.power_limit = nvs_config_get_u16(NVS_CONFIG_KEY_POWER_LIMIT, AUTO_TUNE.power_limit);
-    AUTO_TUNE.fan_limit = nvs_config_get_u16(NVS_CONFIG_KEY_FAN_LIMIT, AUTO_TUNE.fan_limit);
-    AUTO_TUNE.max_voltage_asic = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC, AUTO_TUNE.max_voltage_asic);
-    AUTO_TUNE.max_frequency_asic = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC, AUTO_TUNE.max_frequency_asic);
-    AUTO_TUNE.max_temp_asic = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_TEMP_ASIC, AUTO_TUNE.max_temp_asic);
-    AUTO_TUNE.auto_tune_hashrate = nvs_config_get_u16(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, AUTO_TUNE.auto_tune_hashrate);
-    AUTO_TUNE.overshot_power_limit = nvs_config_get_float(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT, AUTO_TUNE.overshot_power_limit);
-    AUTO_TUNE.overshot_fanspeed = nvs_config_get_u16(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT, AUTO_TUNE.overshot_fanspeed);
-    AUTO_TUNE.vf_ratio_max = nvs_config_get_float(NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
-    AUTO_TUNE.vf_ratio_min = nvs_config_get_float(NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
-    AUTO_TUNE.max_temp_vr = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_TEMP_VR, AUTO_TUNE.max_temp_vr);
+    AUTO_TUNE.frequency = nvs_config_get_u16(NVS_CONFIG_ASIC_FREQUENCY);
+    AUTO_TUNE.voltage = nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE);
+    AUTO_TUNE.power_limit = nvs_config_get_u16(NVS_CONFIG_KEY_POWER_LIMIT);
+    AUTO_TUNE.fan_limit = nvs_config_get_u16(NVS_CONFIG_KEY_FAN_LIMIT);
+    AUTO_TUNE.max_voltage_asic = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC);
+    AUTO_TUNE.max_frequency_asic = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC);
+    AUTO_TUNE.max_temp_asic = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_TEMP_ASIC);
+    AUTO_TUNE.auto_tune_hashrate = nvs_config_get_u16(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE);
+    AUTO_TUNE.overshot_power_limit = nvs_config_get_float(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT);
+    AUTO_TUNE.overshot_fanspeed = nvs_config_get_u16(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT);
+    AUTO_TUNE.vf_ratio_max = nvs_config_get_float(NVS_CONFIG_KEY_VF_RATIO_MAX);
+    AUTO_TUNE.vf_ratio_min = nvs_config_get_float(NVS_CONFIG_KEY_VF_RATIO_MIN);
+    AUTO_TUNE.max_temp_vr = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_TEMP_VR);
 
     last_core_voltage_auto = AUTO_TUNE.voltage;
     last_asic_frequency_auto = AUTO_TUNE.frequency;

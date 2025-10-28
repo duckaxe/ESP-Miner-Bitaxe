@@ -23,17 +23,6 @@ typedef enum {
     NVS_CONFIG_FALLBACK_STRATUM_DIFFICULTY,
     NVS_CONFIG_FALLBACK_STRATUM_EXTRANONCE_SUBSCRIBE,
     NVS_CONFIG_USE_FALLBACK_STRATUM,
-#define NVS_CONFIG_KEY_POWER_LIMIT "power_limit"
-#define NVS_CONFIG_KEY_FAN_LIMIT "fan_limit"
-#define NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC "max_volt_asic"
-#define NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC "max_freq_asic"
-#define NVS_CONFIG_KEY_MAX_TEMP_ASIC "max_temp_asic"
-#define NVS_CONFIG_KEY_AUTO_TUNE_ENABLE "auto_tune"
-#define NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT "osh_pow_limit"
-#define NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT "osh_fan_limit"
-#define NVS_CONFIG_KEY_VF_RATIO_MAX "vf_ratio_max"
-#define NVS_CONFIG_KEY_VF_RATIO_MIN "vf_ratio_min"
-#define NVS_CONFIG_KEY_MAX_TEMP_VR "max_temp_vr"
     
     NVS_CONFIG_ASIC_FREQUENCY,
     NVS_CONFIG_ASIC_FREQUENCY_FLOAT,
@@ -74,7 +63,21 @@ typedef enum {
     NVS_CONFIG_INA260,
     NVS_CONFIG_TPS546,
     NVS_CONFIG_POWER_CONSUMPTION_TARGET,
-    NVS_CONFIG_COUNT
+    //all after that get not read when looping through the settings,but is still avail due nvs
+    NVS_CONFIG_COUNT,
+
+    NVS_CONFIG_KEY_POWER_LIMIT,
+    NVS_CONFIG_KEY_FAN_LIMIT,
+    NVS_CONFIG_KEY_MAX_VOLTAGE_ASIC,
+    NVS_CONFIG_KEY_MAX_FREQUENCY_ASIC,
+    NVS_CONFIG_KEY_MAX_TEMP_ASIC,
+    NVS_CONFIG_KEY_AUTO_TUNE_ENABLE,
+    NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT,
+    NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT,
+    NVS_CONFIG_KEY_VF_RATIO_MAX,
+    NVS_CONFIG_KEY_VF_RATIO_MIN,
+    NVS_CONFIG_KEY_MAX_TEMP_VR
+    
 } NvsConfigKey;
 
 typedef enum {
@@ -96,6 +99,7 @@ typedef union {
 } ConfigValue;
 
 typedef struct {
+    //max key char length 15!
     const char *nvs_key_name;
     ConfigType type;
     ConfigValue value;
