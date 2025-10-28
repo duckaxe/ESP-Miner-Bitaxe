@@ -148,13 +148,13 @@ export class AutotuneComponent implements OnInit {
           this.autotuneForm = this.fb.group({
             power_limit: [autotune.power_limit, [Validators.required, Validators.min(1)]],
             fan_limit: [autotune.fan_limit, [Validators.required, Validators.min(0)]],
-            osh_pow_limit: [autotune.osh_pow_limit],
+            osh_pow_limit: [parseFloat(autotune.osh_pow_limit.toFixed(2))],
             osh_fan_limit: [autotune.osh_fan_limit],
             max_volt_asic: [autotune.max_volt_asic, [Validators.required, Validators.min(1)]],
             max_freq_asic: [autotune.max_freq_asic, [Validators.required, Validators.min(1)]],
             max_temp_asic: [autotune.max_temp_asic, [Validators.required, Validators.min(1)]],
-            vf_ratio_max: [autotune.vf_ratio_max],
-            vf_ratio_min: [autotune.vf_ratio_min],
+            vf_ratio_max: [parseFloat(autotune.vf_ratio_max.toFixed(2))],
+            vf_ratio_min: [parseFloat(autotune.vf_ratio_min.toFixed(2))],
             max_temp_vr: [autotune.max_temp_vr],
             auto_tune: [autotune.auto_tune ?? false]
           });

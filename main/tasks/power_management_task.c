@@ -46,6 +46,7 @@ int pid_startup_counter = 0;
 // Hold and Ramp startup D-term
 #define PID_STARTUP_HOLD_DURATION 3  // Number of cycles to HOLD pid_d_startup
 #define PID_STARTUP_RAMP_DURATION 17 // Number of cycles to RAMP DOWN D (Total startup duration PID_STARTUP_HOLD_DURATION + PID_STARTUP_RAMP_DURATION)
+#define EPSILON 0.001f
 
 PIDController pid;
 
@@ -229,14 +230,14 @@ void POWER_MANAGEMENT_task(void * pvParameters)
             asic_frequency = auto_tune_get_frequency();
         }
 
-        if (core_voltage != last_core_voltage) {
+        if (fabs(core_voltage - last_core_voltage) < EPSILON) {
             ESP_LOGI(TAG, "set vcore voltage from %fmV to %fmV", last_core_voltage, core_voltage);
             VCORE_set_voltage(GLOBAL_STATE, (double) core_voltage / 1000.0);
             last_core_voltage = core_voltage;
             power_management->core_voltage = core_voltage;
         }
 
-        if (asic_frequency != last_asic_frequency) {
+        if (fabs(asic_frequency - last_asic_frequency) < EPSILON) {
             ESP_LOGI(TAG, "set frequency from %g MHz to  %g MHz", last_asic_frequency, asic_frequency);
             
             bool success = ASIC_set_frequency(GLOBAL_STATE, asic_frequency);
