@@ -3,9 +3,9 @@
 #include "esp_log.h"
 #include "global_state.h"
 #include "nvs_config.h"
-#include "power_management_task.h"
 #include <float.h>
 #include <math.h>
+#define POLL_RATE 1800
 
 static const char * TAG = "auto_tune";
 

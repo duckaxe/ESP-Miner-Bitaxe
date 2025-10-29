@@ -28,6 +28,7 @@
 
 #define TPS546_THROTTLE_TEMP 105.0
 #define TPS546_MAX_TEMP 145.0
+#define POLL_RATE 1800
 
 static const char * TAG = "power_management";
 
@@ -146,8 +147,7 @@ void POWER_MANAGEMENT_task(void * pvParameters)
         }
 
         //enable the PID auto control for the FAN if set
-        bool pid_control_fanspeed = nvs_config_get_u16(NVS_CONFIG_AUTO_FAN_SPEED) == 1;
-        if (pid_control_fanspeed) {
+        if(nvs_config_get_bool(NVS_CONFIG_AUTO_FAN_SPEED)){
             if (power_management->chip_temp_avg >= 0) { // Ignore invalid temperature readings (-1)
                 if (power_management->chip_temp2_avg > 0) {
                     pid_input = (power_management->chip_temp_avg + power_management->chip_temp2_avg) / 2.0; // TODO: Or max of both?
