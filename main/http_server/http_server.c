@@ -734,7 +734,7 @@ static esp_err_t GET_system_info(httpd_req_t * req)
     char * stratumUser = nvs_config_get_string(NVS_CONFIG_STRATUM_USER);
     char * fallbackStratumUser = nvs_config_get_string(NVS_CONFIG_FALLBACK_STRATUM_USER);
     char * display = nvs_config_get_string(NVS_CONFIG_DISPLAY);
-    double frequency = GLOBAL_STATE->POWER_MANAGEMENT_MODULE.frequency_value;
+    float frequency = GLOBAL_STATE->POWER_MANAGEMENT_MODULE.frequency_value;
 
     uint8_t mac[6];
     esp_wifi_get_mac(WIFI_IF_STA, mac);
@@ -973,7 +973,7 @@ static esp_err_t GET_system_statistics(httpd_req_t * req)
         if (dataSelection[SRC_FAN_RPM]) { cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.fanRPM)); }
         if (dataSelection[SRC_WIFI_RSSI]) { cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.wifiRSSI)); }
         if (dataSelection[SRC_FREE_HEAP]) { cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.freeHeap)); }
-            if (dataSelection[SRC_FREQUENCY]) { cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.frequency)); }
+        if (dataSelection[SRC_FREQUENCY]) { cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.frequency)); }
         cJSON_AddItemToArray(valueArray, cJSON_CreateNumber(statsData.timestamp));
 
         cJSON_AddItemToArray(statsArray, valueArray);
@@ -1233,7 +1233,7 @@ esp_err_t POST_autotune_update(httpd_req_t * req)
     }
         if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE)->nvs_key_name)) && cJSON_IsBool(item)) {
         AUTO_TUNE.auto_tune_hashrate = item->valueint;
-        nvs_config_set_u16(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, (bool)AUTO_TUNE.auto_tune_hashrate);
+        nvs_config_set_bool(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE, (bool)AUTO_TUNE.auto_tune_hashrate);
     }
     if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.overshot_power_limit = item->valuedouble;
