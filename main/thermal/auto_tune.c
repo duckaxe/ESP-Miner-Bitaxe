@@ -113,6 +113,7 @@ bool can_increase_values()
     return GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc < AUTO_TUNE.fan_limit &&
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.power < AUTO_TUNE.power_limit &&
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg < AUTO_TUNE.max_temp_asic &&
+           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp2_avg < AUTO_TUNE.max_temp_asic &&
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.vr_temp < AUTO_TUNE.max_temp_vr;
 }
 
@@ -120,13 +121,15 @@ bool limithit()
 {
     return GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc > AUTO_TUNE.fan_limit ||
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.power > AUTO_TUNE.power_limit ||
-           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg > AUTO_TUNE.max_temp_asic;
+           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg > AUTO_TUNE.max_temp_asic ||
+           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp2_avg > AUTO_TUNE.max_temp_asic;
            
 }
 
 bool critical_limithit()
 {
     return GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp_avg > AUTO_TUNE.max_temp_asic ||
+           GLOBAL_STATE->POWER_MANAGEMENT_MODULE.chip_temp2_avg > AUTO_TUNE.max_temp_asic ||
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.power >= AUTO_TUNE.power_limit + AUTO_TUNE.overshot_power_limit ||
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.fan_perc >= AUTO_TUNE.fan_limit + AUTO_TUNE.overshot_fanspeed || 
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.vr_temp > AUTO_TUNE.max_temp_vr;
