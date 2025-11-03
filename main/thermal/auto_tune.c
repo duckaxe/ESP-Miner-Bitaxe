@@ -32,9 +32,9 @@ auto_tune_settings AUTO_TUNE = {
 #define HASHRATE_HISTORY_SIZE 30
 float last_core_voltage_auto;
 float last_asic_frequency_auto;
-double last_hashrate_auto;
-double current_hashrate_auto;
-double hashrate_history[HASHRATE_HISTORY_SIZE];
+float last_hashrate_auto;
+float current_hashrate_auto;
+float hashrate_history[HASHRATE_HISTORY_SIZE];
 int history_index = 0;
 bool history_initialized = false;
 
