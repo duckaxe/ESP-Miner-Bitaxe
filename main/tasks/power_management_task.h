@@ -1,8 +1,6 @@
 #ifndef POWER_MANAGEMENT_TASK_H_
 #define POWER_MANAGEMENT_TASK_H_
 
-
-
 typedef struct
 {
     uint16_t fan_perc;
