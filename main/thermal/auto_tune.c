@@ -77,7 +77,7 @@ void update_hashrate_history(double new_value)
 void auto_tune_init(GlobalState * _GLOBAL_STATE)
 {
     GLOBAL_STATE = _GLOBAL_STATE;
-    AUTO_TUNE.frequency = nvs_config_get_u16(NVS_CONFIG_ASIC_FREQUENCY);
+    AUTO_TUNE.frequency = nvs_config_get_float(NVS_CONFIG_ASIC_FREQUENCY);
     AUTO_TUNE.voltage = nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE);
     AUTO_TUNE.power_limit = nvs_config_get_u16(NVS_CONFIG_KEY_POWER_LIMIT);
     AUTO_TUNE.fan_limit = nvs_config_get_u16(NVS_CONFIG_KEY_FAN_LIMIT);
