@@ -6,7 +6,7 @@
 #include "common.h"
 #include "asic.h"
 
-#define POLL_RATE 5000
+#define POLL_RATE 900
 #define EMA_ALPHA 12
 
 #define HASH_CNT_LSB 0x100000000uLL // Hash counters are incremented on difficulty 1 (2^32 hashes)
@@ -15,6 +15,7 @@
 static const char *TAG = "hashrate_monitor";
 
 static float frequency_value;
+static GlobalState * GLOBAL_STATE;
 
 static float sum_hashrates(measurement_t * measurement, int asic_count)
 {
@@ -60,6 +61,11 @@ static void clear_measurements(GlobalState * GLOBAL_STATE)
     }
 }
 
+void hashrate_monitor_clear_measurements()
+{
+    clear_measurements(GLOBAL_STATE);
+}
+
 static float hash_counter_to_ghs(uint32_t duration_ms, uint32_t counter)
 {
     if (duration_ms == 0) return 0.0f;
@@ -100,7 +106,7 @@ static void update_hash_counter(uint32_t time_ms, uint32_t value, measurement_t 
 
 void hashrate_monitor_task(void *pvParameters)
 {
-    GlobalState * GLOBAL_STATE = (GlobalState *)pvParameters;
+    GLOBAL_STATE = (GlobalState *)pvParameters;
     HashrateMonitorModule * HASHRATE_MONITOR_MODULE = &GLOBAL_STATE->HASHRATE_MONITOR_MODULE;
     SystemModule * SYSTEM_MODULE = &GLOBAL_STATE->SYSTEM_MODULE;
 
@@ -126,9 +132,11 @@ void hashrate_monitor_task(void *pvParameters)
         ASIC_read_registers(GLOBAL_STATE);
 
         vTaskDelay(100 / portTICK_PERIOD_MS);
-
-        SYSTEM_MODULE->current_hashrate = sum_hashrates(HASHRATE_MONITOR_MODULE->total_measurement, asic_count);
+        float hsrt = sum_hashrates(HASHRATE_MONITOR_MODULE->total_measurement, asic_count);;
+        //SYSTEM_MODULE->current_hashrate = sum_hashrates(HASHRATE_MONITOR_MODULE->total_measurement, asic_count);
         HASHRATE_MONITOR_MODULE->error_count = sum_values(HASHRATE_MONITOR_MODULE->error_measurement, asic_count);
+        if(hsrt >= 1.)
+            SYSTEM_MODULE->current_hashrate = hsrt;
 
         vTaskDelayUntil(&taskWakeTime, POLL_RATE / portTICK_PERIOD_MS);
     }
