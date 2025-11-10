@@ -132,8 +132,7 @@ void hashrate_monitor_task(void *pvParameters)
         ASIC_read_registers(GLOBAL_STATE);
 
         vTaskDelay(100 / portTICK_PERIOD_MS);
-        float hsrt = sum_hashrates(HASHRATE_MONITOR_MODULE->total_measurement, asic_count);;
-        //SYSTEM_MODULE->current_hashrate = sum_hashrates(HASHRATE_MONITOR_MODULE->total_measurement, asic_count);
+        float hsrt = sum_hashrates(HASHRATE_MONITOR_MODULE->total_measurement, asic_count);
         HASHRATE_MONITOR_MODULE->error_count = sum_values(HASHRATE_MONITOR_MODULE->error_measurement, asic_count);
         if(hsrt >= 1.)
             SYSTEM_MODULE->current_hashrate = hsrt;
@@ -161,6 +160,7 @@ void hashrate_monitor_register_read(void *pvParameters, register_type_t register
     if (POWER_MANAGEMENT_MODULE->frequency_value != frequency_value) {
         clear_measurements(GLOBAL_STATE);
         frequency_value = POWER_MANAGEMENT_MODULE->frequency_value;
+        return;
     }
 
     switch(register_type) {
