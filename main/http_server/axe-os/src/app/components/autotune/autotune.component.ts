@@ -137,7 +137,24 @@ export class AutotuneComponent implements OnInit {
           this.updateSliderMinForPid(info);
         },
         error: () => {
-          this.toastr.error('Failed to load getInfog settings');
+          this.toastr.error('Failed to load getInfo settings');
+        }
+      });
+
+    this.systemService.getAsicSettings()
+    .pipe(this.loadingService.lockUIUntilComplete())
+    .subscribe({
+        next: (asic) => {
+          // Update the slider config with dynamic minimum value if PID is active
+          const maxVoltage = asic.defaultVoltage + asic.defaultVoltage * 0.25;
+          this.sliderConfigs.forEach(config => {
+          if (config.formControlName === 'max_volt_asic') {
+            config.max = maxVoltage;
+          }
+          });
+        },
+        error: () => {
+          this.toastr.error('Failed to load getAsicSettings');
         }
       });
 
@@ -180,6 +197,7 @@ export class AutotuneComponent implements OnInit {
     // Otherwise keep the default minimum of 20
     const minTemp = isPidActive ? (info.temptarget + 1) : 20;
     const minFanspeed = isPidActive ? (info.minFanSpeed + 1) : 20;
+    const maxPower = info.maxPower;
     // Update the slider configuration in our component
     this.sliderConfigs.forEach(config => {
       if (config.formControlName === 'max_temp_asic') {
@@ -187,6 +205,9 @@ export class AutotuneComponent implements OnInit {
       }
       if (config.formControlName === 'fan_limit') {
         config.min = minFanspeed;
+      }
+      if (config.formControlName === 'power_limit') {
+        config.max = maxPower;
       }
     });
   }
