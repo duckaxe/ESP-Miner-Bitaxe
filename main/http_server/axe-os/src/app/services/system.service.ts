@@ -271,8 +271,6 @@ export class SystemService {
       auto_tune: false,
       osh_pow_limit: 0.2,
       osh_fan_limit: 5,
-      vf_ratio_max: 2.2,
-      vf_ratio_min: 1.76
     }).pipe(delay(1000));
   }
 

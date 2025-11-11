@@ -25,8 +25,6 @@ auto_tune_settings AUTO_TUNE = {
     .auto_tune_hashrate = false,
     .overshot_power_limit = 0.2, // watt
     .overshot_fanspeed = 5,      //%
-    .vf_ratio_max = 2.2,
-    .vf_ratio_min = 1.76,
 };
 
 #define HASHRATE_HISTORY_SIZE 30
@@ -59,7 +57,7 @@ enum TuneState
 
 enum TuneState state;
 
-void update_hashrate_history(double new_value)
+void update_hashrate_history(float new_value)
 {
     // Initialize history if not already done
     if (!history_initialized) {
@@ -87,8 +85,6 @@ void auto_tune_init(GlobalState * _GLOBAL_STATE)
     AUTO_TUNE.auto_tune_hashrate = nvs_config_get_bool(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE);
     AUTO_TUNE.overshot_power_limit = nvs_config_get_float(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT);
     AUTO_TUNE.overshot_fanspeed = nvs_config_get_u16(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT);
-    AUTO_TUNE.vf_ratio_max = nvs_config_get_float(NVS_CONFIG_KEY_VF_RATIO_MAX);
-    AUTO_TUNE.vf_ratio_min = nvs_config_get_float(NVS_CONFIG_KEY_VF_RATIO_MIN);
     AUTO_TUNE.max_temp_vr = nvs_config_get_u16(NVS_CONFIG_KEY_MAX_TEMP_VR);
 
     last_core_voltage_auto = AUTO_TUNE.voltage;
@@ -151,7 +147,7 @@ bool hashrate_increased_since_last_set()
     int last_set_index = history_index;
 
     // Check if hashrate increased since that point
-    double last_value = hashrate_history[last_set_index];
+    float last_value = hashrate_history[last_set_index];
     bool increased = false;
 
     for (int i = 1; i < HASHRATE_HISTORY_SIZE; i++) {
@@ -165,34 +161,9 @@ bool hashrate_increased_since_last_set()
     return increased;
 }
 
-static inline double clamp(double val, double min, double max)
+static inline float clamp(float val, float min, float max)
 {
     return (val < min) ? min : ((val > max) ? max : val);
-}
-
-static void enforce_voltage_frequency_ratio()
-{
-    double min_voltage = last_asic_frequency_auto * AUTO_TUNE.vf_ratio_min;
-    double max_voltage = last_asic_frequency_auto * AUTO_TUNE.vf_ratio_max;
-
-    if (last_core_voltage_auto < min_voltage) {
-        last_core_voltage_auto = min_voltage;
-        lastVoltageSet = true;
-    } else if (last_core_voltage_auto > max_voltage) {
-        last_core_voltage_auto = max_voltage;
-        lastVoltageSet = false;
-    }
-
-    double min_frequency = last_core_voltage_auto / AUTO_TUNE.vf_ratio_max;
-    double max_frequency = last_core_voltage_auto / AUTO_TUNE.vf_ratio_min;
-
-    if (last_asic_frequency_auto < min_frequency) {
-        last_asic_frequency_auto = min_frequency;
-        lastVoltageSet = false;
-    } else if (last_asic_frequency_auto > max_frequency) {
-        last_asic_frequency_auto = max_frequency;
-        lastVoltageSet = true;
-    }
 }
 
 void increase_values()
@@ -202,7 +173,7 @@ void increase_values()
     } else {
         last_core_voltage_auto += volt_step;
     }
-    enforce_voltage_frequency_ratio();
+    //enforce_voltage_frequency_ratio();
 }
 
 void respectLimits()

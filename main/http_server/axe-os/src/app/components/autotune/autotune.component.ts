@@ -96,24 +96,6 @@ export class AutotuneComponent implements OnInit {
       unit: '°C',
       tooltip: 'Maximum temperature for the VoltageRegulator in degrees Celsius. This ensures thermal safety, preventing hardware damage due to overheating. Default:85°C'
     },
-    {
-      formControlName: 'vf_ratio_max',
-      label: 'Max V/F Ratio',
-      min: 2.0,
-      max: 2.2,
-      step: 0.01,
-      unit: '',
-      tooltip: 'This value sets an upper limit on the Voltage/Frequency ratio that the system is allowed to use. If this ratio is exceeded, the system will adjust the voltage or frequency to stay within this maximum threshold. Default:2.2'
-    },
-    {
-      formControlName: 'vf_ratio_min',
-      label: 'Min V/F Ratio',
-      min: 1.6,
-      max: 2.0,
-      step: 0.01,
-      unit: '',
-      tooltip: ' This value sets a lower limit on the Voltage/Frequency ratio that the system is allowed to use. If this ratio falls below, the system will adjust the voltage or frequency to stay within this minimum threshold. Default:1.76'
-    }
   ];
 
   constructor(
@@ -170,8 +152,6 @@ export class AutotuneComponent implements OnInit {
             max_volt_asic: [autotune.max_volt_asic, [Validators.required, Validators.min(1)]],
             max_freq_asic: [autotune.max_freq_asic, [Validators.required, Validators.min(1)]],
             max_temp_asic: [autotune.max_temp_asic, [Validators.required, Validators.min(1)]],
-            vf_ratio_max: [parseFloat(autotune.vf_ratio_max.toFixed(2))],
-            vf_ratio_min: [parseFloat(autotune.vf_ratio_min.toFixed(2))],
             max_temp_vr: [autotune.max_temp_vr],
             auto_tune: [autotune.auto_tune ?? false]
           });

@@ -1166,8 +1166,6 @@ esp_err_t GET_autotune_info(httpd_req_t * req)
     cJSON_AddBoolToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_AUTO_TUNE_ENABLE)->nvs_key_name, AUTO_TUNE.auto_tune_hashrate);
     cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT)->nvs_key_name, AUTO_TUNE.overshot_power_limit);
     cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT)->nvs_key_name, AUTO_TUNE.overshot_fanspeed);
-    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_VF_RATIO_MAX)->nvs_key_name, AUTO_TUNE.vf_ratio_max);
-    cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_VF_RATIO_MIN)->nvs_key_name, AUTO_TUNE.vf_ratio_min);
     cJSON_AddNumberToObject(root, nvs_config_get_settings(NVS_CONFIG_KEY_MAX_TEMP_VR)->nvs_key_name, AUTO_TUNE.max_temp_vr);
 
     const char *response = cJSON_Print(root);
@@ -1242,14 +1240,6 @@ esp_err_t POST_autotune_update(httpd_req_t * req)
     if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.overshot_fanspeed = (uint16_t)item->valuedouble;
         nvs_config_set_u16(NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT, (uint16_t)AUTO_TUNE.overshot_fanspeed);
-    }
-    if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_VF_RATIO_MAX)->nvs_key_name)) && cJSON_IsNumber(item)) {
-        AUTO_TUNE.vf_ratio_max = item->valuedouble;
-        nvs_config_set_float(NVS_CONFIG_KEY_VF_RATIO_MAX, AUTO_TUNE.vf_ratio_max);
-    }
-    if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_VF_RATIO_MIN)->nvs_key_name)) && cJSON_IsNumber(item)) {
-        AUTO_TUNE.vf_ratio_min = item->valuedouble;
-        nvs_config_set_float(NVS_CONFIG_KEY_VF_RATIO_MIN, AUTO_TUNE.vf_ratio_min);
     }
      if ((item = cJSON_GetObjectItem(root, nvs_config_get_settings(NVS_CONFIG_KEY_MAX_TEMP_VR)->nvs_key_name)) && cJSON_IsNumber(item)) {
         AUTO_TUNE.max_temp_vr = (uint16_t)item->valueint;

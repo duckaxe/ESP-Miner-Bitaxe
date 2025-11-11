@@ -111,8 +111,6 @@ static Settings settings[] = {
     [NVS_CONFIG_KEY_AUTO_TUNE_ENABLE]                  = {.nvs_key_name = "auto_tune",       .type = TYPE_BOOL,  .default_value = {.b   = false}},
     [NVS_CONFIG_KEY_OVERSHOT_POWER_LIMIT]              = {.nvs_key_name = "osh_pow_limit",   .type = TYPE_FLOAT, .default_value = {.f   = 0.2f},},
     [NVS_CONFIG_KEY_OVERSHOT_FAN_LIMIT]                = {.nvs_key_name = "osh_fan_limit",   .type = TYPE_U16,   .default_value = {.u16 = 10},},
-    [NVS_CONFIG_KEY_VF_RATIO_MAX]                      = {.nvs_key_name = "vf_ratio_max",    .type = TYPE_FLOAT, .default_value = {.f   = 2.2f},},
-    [NVS_CONFIG_KEY_VF_RATIO_MIN]                      = {.nvs_key_name = "vf_ratio_min",    .type = TYPE_FLOAT, .default_value = {.f   = 1.78f},},
     [NVS_CONFIG_KEY_MAX_TEMP_VR]                       = {.nvs_key_name = "max_temp_vr",     .type = TYPE_U16,   .default_value = {.u16 = 85},}
 };
 
