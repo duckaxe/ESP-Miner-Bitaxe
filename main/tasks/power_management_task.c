@@ -311,7 +311,6 @@ void POWER_MANAGEMENT_task(void * pvParameters)
             if (success) {
                 power_management->frequency_value = asic_frequency;
                 power_management->expected_hashrate = expected_hashrate(GLOBAL_STATE, asic_frequency);
-                hashrate_monitor_clear_measurements();
             }
             
             last_asic_frequency = asic_frequency;
