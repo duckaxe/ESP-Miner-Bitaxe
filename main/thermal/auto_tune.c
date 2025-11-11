@@ -43,10 +43,8 @@ float freq_step;
 float volt_step;
 GlobalState * GLOBAL_STATE;
 
-#define INIT_FREQ 525
-#define INIT_VOLTAGE 1150
-#define MIN_FREQ 401
-#define MIN_VOLTAGE 1001
+#define MIN_FREQ 400
+#define MIN_VOLTAGE 1000
 
 enum TuneState
 {

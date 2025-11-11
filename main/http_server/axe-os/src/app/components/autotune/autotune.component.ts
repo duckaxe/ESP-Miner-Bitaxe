@@ -128,10 +128,14 @@ export class AutotuneComponent implements OnInit {
     .subscribe({
         next: (asic) => {
           // Update the slider config with dynamic minimum value if PID is active
-          const maxVoltage = asic.defaultVoltage + asic.defaultVoltage * 0.25;
+          const maxVoltage = asic.defaultVoltage *1.25;
+          const maxFrequency = asic.defaultFrequency *2;
           this.sliderConfigs.forEach(config => {
           if (config.formControlName === 'max_volt_asic') {
             config.max = maxVoltage;
+          }
+          if (config.formControlName === 'max_freq_asic') {
+            config.max = maxFrequency;
           }
           });
         },
