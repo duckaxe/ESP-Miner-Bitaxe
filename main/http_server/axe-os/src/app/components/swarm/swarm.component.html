@@ -104,7 +104,7 @@
                                             {{axe.IP}}
                                         </a>
                                         <span *ngIf="isThisDevice(axe.IP)" class="ml-1 cursor-pointer" pTooltip="This device" tooltipPosition="top">
-                                            <i class="pi pi-star text-xs"></i>
+                                            <i class="pi pi-star-fill text-xs"></i>
                                         </span>
                                     </div>
                                 </div>
@@ -234,7 +234,7 @@
                             <td>
                                 <a [href]="'http://' + axe.IP" target="_blank" class="text-800">{{axe.IP}}</a>
                                 <span *ngIf="isThisDevice(axe.IP)" class="ml-2 cursor-pointer" pTooltip="This device" tooltipPosition="top">
-                                    <i class="pi pi-star text-xs"></i>
+                                    <i class="pi pi-star-fill text-xs"></i>
                                 </span>
                             </td>
                             <td>{{axe.hashRate * 1000000000 | hashSuffix}}</td>
