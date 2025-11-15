@@ -21,7 +21,9 @@
 
 static unsigned long poll_count = 0;
 static float hashrate_1m[HASHRATE_1M_SIZE];
+static float hashrate_10m_prev;
 static float hashrate_10m[HASHRATE_10M_SIZE];
+static float hashrate_1h_prev;
 static float hashrate_1h[HASHRATE_1H_SIZE];
 
 static const char *TAG = "hashrate_monitor";
@@ -99,9 +101,31 @@ static void update_hashrate_averages(SystemModule * SYSTEM_MODULE)
 {
     hashrate_1m[poll_count % HASHRATE_1M_SIZE] = SYSTEM_MODULE->current_hashrate;
     SYSTEM_MODULE->hashrate_1m = calculate_avg_nan_safe(hashrate_1m, HASHRATE_1M_SIZE);
-    hashrate_10m[(poll_count / DIV_10M) % HASHRATE_10M_SIZE] = SYSTEM_MODULE->hashrate_1m;
+
+    int hashrate_10m_blend = poll_count % HASHRATE_1M_SIZE;
+    if (hashrate_10m_blend == 0) {
+        hashrate_10m_prev = hashrate_10m[(poll_count / DIV_10M) % HASHRATE_10M_SIZE];
+    }
+    float hashrate_1m_value = SYSTEM_MODULE->hashrate_1m;
+    if (!isnanf(hashrate_10m_prev)) {
+        float f = (hashrate_10m_blend + 1.0f) / (float)HASHRATE_1M_SIZE;
+        hashrate_1m_value = f * hashrate_1m_value + (1.0f - f) * hashrate_10m_prev;
+    }
+
+    hashrate_10m[(poll_count / DIV_10M) % HASHRATE_10M_SIZE] = hashrate_1m_value;
     SYSTEM_MODULE->hashrate_10m = calculate_avg_nan_safe(hashrate_10m, HASHRATE_10M_SIZE);
-    hashrate_1h[(poll_count / DIV_1H) % HASHRATE_1H_SIZE] = SYSTEM_MODULE->hashrate_10m;
+
+    int hashrate_1h_blend = poll_count % DIV_1H;
+    if (hashrate_1h_blend == 0) {
+        hashrate_1h_prev = hashrate_1h[(poll_count / DIV_1H) % HASHRATE_1H_SIZE];
+    }
+    float hashrate_10m_value = SYSTEM_MODULE->hashrate_10m;
+    if (!isnanf(hashrate_1h_prev)) {
+        float f = (hashrate_1h_blend + 1.0f) / (float)DIV_1H;
+        hashrate_10m_value = f * hashrate_10m_value + (1.0f - f) * hashrate_1h_prev;
+    }
+
+    hashrate_1h[(poll_count / DIV_1H) % HASHRATE_1H_SIZE] = hashrate_10m_value;
     SYSTEM_MODULE->hashrate_1h = calculate_avg_nan_safe(hashrate_1h, HASHRATE_1H_SIZE);
 
     poll_count++;
@@ -144,7 +168,7 @@ void hashrate_monitor_task(void *pvParameters)
         SYSTEM_MODULE->current_hashrate = current_hashrate;
         SYSTEM_MODULE->error_percentage = current_hashrate > 0 ? error_hashrate / current_hashrate * 100.f : 0;
 
-        update_hashrate_averages(SYSTEM_MODULE);
+        if(current_hashrate > 0.0f) update_hashrate_averages(SYSTEM_MODULE);
 
         vTaskDelayUntil(&taskWakeTime, POLL_RATE / portTICK_PERIOD_MS);
     }
