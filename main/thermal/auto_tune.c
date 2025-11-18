@@ -5,7 +5,7 @@
 #include "nvs_config.h"
 #include <float.h>
 #include <math.h>
-#define POLL_RATE 1800
+#define POLL_RATE 1000
 
 static const char * TAG = "auto_tune";
 
