@@ -27,12 +27,12 @@ auto_tune_settings AUTO_TUNE = {
     .overshot_fanspeed = 5,      //%
 };
 
-#define HASHRATE_HISTORY_SIZE 30
+#define ERROR_HISTORY_SIZE 5
 float last_core_voltage_auto;
 float last_asic_frequency_auto;
 float last_hashrate_auto;
-float current_hashrate_auto;
-float hashrate_history[HASHRATE_HISTORY_SIZE];
+float current_error_auto;
+float error_history[ERROR_HISTORY_SIZE];
 int history_index = 0;
 bool history_initialized = false;
 
@@ -55,19 +55,19 @@ enum TuneState
 
 enum TuneState state;
 
-void update_hashrate_history(float new_value)
+void update_error_history(float new_value)
 {
     // Initialize history if not already done
     if (!history_initialized) {
-        for (int i = 0; i < HASHRATE_HISTORY_SIZE; i++) {
-            hashrate_history[i] = new_value;
+        for (int i = 0; i < ERROR_HISTORY_SIZE; i++) {
+            error_history[i] = new_value;
         }
         history_initialized = true;
     }
 
     // Add new value to circular buffer
-    hashrate_history[history_index] = new_value;
-    history_index = (history_index + 1) % HASHRATE_HISTORY_SIZE;
+    error_history[history_index] = new_value;
+    history_index = (history_index + 1) % ERROR_HISTORY_SIZE;
 }
 
 void auto_tune_init(GlobalState * _GLOBAL_STATE)
@@ -88,10 +88,10 @@ void auto_tune_init(GlobalState * _GLOBAL_STATE)
     last_core_voltage_auto = AUTO_TUNE.voltage;
     last_asic_frequency_auto = AUTO_TUNE.frequency;
     last_hashrate_auto = GLOBAL_STATE->SYSTEM_MODULE.current_hashrate;
-    current_hashrate_auto = last_hashrate_auto;
+    current_error_auto = last_hashrate_auto;
 
     // Initialize hashrate history
-    update_hashrate_history(last_hashrate_auto);
+    update_error_history(last_hashrate_auto);
 
     state = sleep_before_warmup;
     waitCounter = 45 * 1000 / POLL_RATE;
@@ -99,7 +99,7 @@ void auto_tune_init(GlobalState * _GLOBAL_STATE)
 
 bool waitForStartUp()
 {
-    return current_hashrate_auto > 0 && waitCounter <= 0;
+    return current_error_auto > 0 && waitCounter <= 0;
 }
 
 bool can_increase_values()
@@ -129,14 +129,7 @@ bool critical_limithit()
            GLOBAL_STATE->POWER_MANAGEMENT_MODULE.vr_temp > AUTO_TUNE.max_temp_vr;
 }
 
-bool hashrate_decreased()
-{
-    return last_hashrate_auto > current_hashrate_auto;
-}
-
-
-
-bool hashrate_increased_since_last_set()
+bool error_increased_since_last_set()
 {
     if (!history_initialized) {
         return false; // Not enough data yet
@@ -145,12 +138,12 @@ bool hashrate_increased_since_last_set()
     int last_set_index = history_index;
 
     // Check if hashrate increased since that point
-    float last_value = hashrate_history[last_set_index];
+    float last_value = error_history[last_set_index];
     bool increased = false;
 
-    for (int i = 1; i < HASHRATE_HISTORY_SIZE; i++) {
-        int idx = (last_set_index + i) % HASHRATE_HISTORY_SIZE;
-        if (hashrate_history[idx] > last_value) {
+    for (int i = 1; i < ERROR_HISTORY_SIZE; i++) {
+        int idx = (last_set_index + i) % ERROR_HISTORY_SIZE;
+        if (error_history[idx] > last_value) {
             increased = true;
             break;
         }
@@ -193,10 +186,10 @@ void dowork()
     
 
     // Check if hashrate increased since last voltage/frequency set
-    bool hashrate_increased = hashrate_increased_since_last_set();
+    bool error_increased = error_increased_since_last_set();
 
     // If hashrate didn't increase, switch the setting
-    if (!hashrate_increased) {
+    if (error_increased) {
         lastVoltageSet = !lastVoltageSet;
     }
 
@@ -207,7 +200,7 @@ void dowork()
         increase_values();
     }
 
-    ESP_LOGI(TAG, "Hashrate %f Voltage %f Frequency %f", current_hashrate_auto, last_core_voltage_auto, last_asic_frequency_auto);
+    ESP_LOGI(TAG, "Hashrate %f Voltage %f Frequency %f", current_error_auto, last_core_voltage_auto, last_asic_frequency_auto);
 
     respectLimits();
     AUTO_TUNE.voltage = last_core_voltage_auto;
@@ -216,8 +209,8 @@ void dowork()
 
 void auto_tune()
 {
-    current_hashrate_auto = GLOBAL_STATE->SYSTEM_MODULE.current_hashrate;
-    update_hashrate_history(current_hashrate_auto);
+    current_error_auto = GLOBAL_STATE->SYSTEM_MODULE.error_percentage;
+    update_error_history(current_error_auto);
 
     switch (state) {
     case sleep_before_warmup:
@@ -253,7 +246,7 @@ void auto_tune()
         }
         break;
     }
-    last_hashrate_auto = current_hashrate_auto;
+    last_hashrate_auto = current_error_auto;
 }
 
 float auto_tune_get_frequency()
