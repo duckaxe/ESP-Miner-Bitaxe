@@ -16,9 +16,10 @@
             </p-checkbox>
           </div>
           <label for="auto_tune" class="col-11 m-0 pl-3 md:col-2 md:flex-order-1 md:p-2">
-            Auto Tune <span class="white-space-nowrap">Hashrate
-              <i class="pi pi-info-circle text-xs px-1" pTooltip="Enables automatic tuning of hashrate based on system conditions. This feature adjusts the hashrate dynamically to optimize performance and efficiency."></i>
-            </span>
+            <tooltip-text-icon
+                text="Auto Tune Hashrate"
+                tooltip="Enables automatic tuning of hashrate based on system conditions. This feature adjusts the hashrate dynamically to optimize performance and efficiency."
+            />
           </label>
         </div>
 
@@ -29,8 +30,10 @@
               [for]="slider.formControlName"
               class="hidden md:flex md:col-2 md:m-0 md:align-items-baseline"
               >
-              {{ slider.label }}
-              <i class="pi pi-info-circle text-xs px-1" [pTooltip]="slider.tooltip"></i>
+              <tooltip-text-icon
+                text="{{ slider.label }}"
+                tooltip="{{ slider.tooltip }}"
+            />
             </label>
             <div class="col-12 md:col-10">
               <label class="block mb-1">
