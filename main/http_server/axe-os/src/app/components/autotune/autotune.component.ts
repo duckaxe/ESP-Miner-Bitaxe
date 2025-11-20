@@ -124,19 +124,19 @@ export class AutotuneComponent implements OnInit {
       });
 
     this.systemService.getAsicSettings()
-    .pipe(this.loadingService.lockUIUntilComplete())
-    .subscribe({
+      .pipe(this.loadingService.lockUIUntilComplete())
+      .subscribe({
         next: (asic) => {
           // Update the slider config with dynamic minimum value if PID is active
-          const maxVoltage = asic.defaultVoltage *1.25;
-          const maxFrequency = asic.defaultFrequency *2;
+          const maxVoltage = asic.defaultVoltage * 1.25;
+          const maxFrequency = asic.defaultFrequency * 2;
           this.sliderConfigs.forEach(config => {
-          if (config.formControlName === 'max_volt_asic') {
-            config.max = maxVoltage;
-          }
-          if (config.formControlName === 'max_freq_asic') {
-            config.max = maxFrequency;
-          }
+            if (config.formControlName === 'max_volt_asic') {
+              config.max = maxVoltage;
+            }
+            if (config.formControlName === 'max_freq_asic') {
+              config.max = maxFrequency;
+            }
           });
         },
         error: () => {
@@ -196,5 +196,3 @@ export class AutotuneComponent implements OnInit {
     });
   }
 }
-
-
