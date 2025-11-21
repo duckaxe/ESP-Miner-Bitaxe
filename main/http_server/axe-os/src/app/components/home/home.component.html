@@ -46,7 +46,7 @@
                                         <td class="p-0 text-center text-800 line-height-1">
                                             {{info.errorPercentage | number: '1.2-2'}}%
                                         </td>
-                                        <td class="p-0 pl-3 text-center text-800 line-height-1 white-space-nowrap" *ngIf="info.expectedHashrate">
+                                        <td *ngIf="info.expectedHashrate" class="p-0 pl-3 text-center text-800 line-height-1 white-space-nowrap">
                                             {{info.expectedHashrate | hashSuffix: { tickmark: true } }}
                                         </td>
                                     </tr>
@@ -57,21 +57,15 @@
                         <table class="px-1 border-1 border-50 border-round-xs">
                             <thead>
                                 <tr>
-                                    <th class="p-0 text-500 font-normal line-height-1">1m</th>
-                                    <th class="p-0 text-500 font-normal line-height-1">10m</th>
-                                    <th class="p-0 text-500 font-normal line-height-1">1h</th>
+                                    <th *ngFor="let i of hashrateAverages" class="p-0 text-500 font-normal line-height-1">
+                                        {{i.label}}
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="p-0 text-center text-green-500 font-medium">
-                                        {{info.hashRate_1m | hashSuffix}}
-                                    </td>
-                                    <td class="p-0 text-center text-green-500 font-medium">
-                                        {{info.hashRate_10m | hashSuffix}}
-                                    </td>
-                                    <td class="p-0 text-center text-green-500 font-medium">
-                                        {{info.hashRate_1h | hashSuffix}}
+                                    <td *ngFor="let i of hashrateAverages" class="p-0 text-center text-green-500 font-medium">
+                                        {{ info[i.key] | hashSuffix }}
                                     </td>
                                 </tr>
                             </tbody>
