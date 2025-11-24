@@ -234,15 +234,20 @@ export class SwarmComponent implements OnInit, OnDestroy {
   }
 
   public identify(axe: any) {
-    this.systemService.identify(`http://${axe.IP}`)
-      .subscribe({
-        next: () => {
-          this.toastr.success('The device says "Hi!" for 30 seconds.');
-        },
-        error: (err: HttpErrorResponse) => {
-          this.toastr.error(`Could not identify device. ${err.message}`);
+    this.httpClient.post(`http://${axe.IP}/api/system/identify`, {}).pipe(
+      catchError(error => {
+        if (error.status === 0 || error.status === 200 || error.name === 'HttpErrorResponse') {
+          return of('success');
+        } else {
+          this.toastr.error(`Failed to identify device at ${axe.IP}`);
+          return of(null);
         }
-      });
+      })
+    ).subscribe(res => {
+      if (res !== null && res == 'success') {
+        this.toastr.success(`Device at ${axe.IP} says "Hi!" for 30 seconds`);
+      }
+    });
   }
 
   public refreshErrorHandler = (error: any, ip: string) => {
