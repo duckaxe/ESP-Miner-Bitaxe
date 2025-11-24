@@ -1266,6 +1266,14 @@ esp_err_t start_rest_server(void * pvParameters)
     };
     httpd_register_uri_handler(server, &system_identify_uri);
 
+    httpd_uri_t system_identify_options_uri = {
+        .uri = "/api/system/identify", 
+        .method = HTTP_OPTIONS, 
+        .handler = handle_options_request, 
+        .user_ctx = NULL
+    };
+    httpd_register_uri_handler(server, &system_identify_options_uri);
+
     httpd_uri_t system_restart_uri = {
         .uri = "/api/system/restart", .method = HTTP_POST, 
         .handler = POST_restart, 
