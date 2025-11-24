@@ -30,23 +30,23 @@
                             <span class="text-900 font-medium text-2xl white-space-nowrap">
                                 {{info.hashRate | hashSuffix}}
                             </span>
-                            <table class="text-xs">
+                            <table class="text-xs line-height-1 font-normal text-center">
                                 <thead>
                                     <tr>
-                                        <th class="p-0 text-400 font-normal line-height-1 cursor-pointer" pTooltip="Hash error percentage as reported by the ASIC. A small amount of errors every few seconds is normal. Frequency changes, agressive overclocking, undervoltage or a bad power supply can significantly increase the error rate.">
+                                        <th class="p-0 text-400 cursor-pointer" pTooltip="Hash error percentage as reported by the ASIC. A small amount of errors every few seconds is normal. Frequency changes, agressive overclocking, undervoltage or a bad power supply can significantly increase the error rate.">
                                             Error
                                         </th>
-                                        <th *ngIf="info.expectedHashrate" class="p-0 pl-3 text-400 font-normal line-height-1">
+                                        <th *ngIf="info.expectedHashrate" class="p-0 pl-3 text-400">
                                             Expected
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="p-0 text-center text-800 line-height-1">
+                                        <td class="p-0 text-800">
                                             {{info.errorPercentage | number: '1.2-2'}}%
                                         </td>
-                                        <td *ngIf="info.expectedHashrate" class="p-0 pl-3 text-center text-800 line-height-1 white-space-nowrap">
+                                        <td *ngIf="info.expectedHashrate" class="p-0 pl-3 text-800">
                                             {{info.expectedHashrate | hashSuffix: { tickmark: true } }}
                                         </td>
                                     </tr>
@@ -82,19 +82,25 @@
                     <ng-container *ngIf="!info.power_fault; else powerFault">
                         <div class="flex align-items-center justify-content-between gap-2 mb-3">
                             <span class="text-900 font-medium text-2xl white-space-nowrap">
-                                {{getEfficiency(info) | number: '1.2-2'}} J/Th
+                                {{ getEfficiency(info) | number:'1.1-1' }} J/Th
                             </span>
-                            <table class="text-xs">
+                            <table class="text-xs line-height-1 font-normal text-center">
                                 <thead>
                                     <tr>
-                                        <th class="p-0 text-400 font-normal line-height-1">
+                                        <th class="p-0 text-400">
+                                            Average
+                                        </th>
+                                        <th class="p-0 pl-3 text-400">
                                             Expected
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="p-0 text-center text-800 line-height-1 white-space-nowrap">
+                                        <td class="p-0 text-800 ">
+                                            {{getEfficiencyAverage() | number: '1.2-2'}} J/Th
+                                        </td>
+                                        <td class="p-0 pl-3 text-800">
                                             {{getExpectedEfficiency(info) | number: '1.2-2'}} J/Th
                                         </td>
                                     </tr>
@@ -102,14 +108,22 @@
                             </table>
                         </div>
 
-                        <div>
-                            <span class="text-green-500 font-medium white-space-nowrap">
-                                {{getEfficiencyAverage() | number: '1.2-2'}} J/Th
-                            </span>
-                            <span class="text-500">
-                                Average
-                            </span>
-                        </div>
+                        <table class="px-1 border-1 border-50 border-round-xs">
+                            <thead>
+                                <tr>
+                                    <th *ngFor="let i of hashrateAverages" class="p-0 text-500 font-normal line-height-1">
+                                        {{i.label}}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td *ngFor="let i of hashrateAverages" class="p-0 text-center text-green-500 font-medium">
+                                        {{getEfficiencyAverage() | number: '1.2-2'}} J/Th
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </ng-container>
                 </div>
             </div>
