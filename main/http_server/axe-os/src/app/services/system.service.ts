@@ -7,6 +7,7 @@ import { chartLabelValue } from 'src/models/enum/eChartLabel';
 import { ISystemInfo } from 'src/models/ISystemInfo';
 import { ISystemStatistics } from 'src/models/ISystemStatistics';
 import { ISystemASIC } from 'src/models/ISystemASIC';
+import { IAutotuneSettings } from 'src/models/IAutotuneSettings';
 
 import { environment } from '../../environments/environment';
 
@@ -257,7 +258,7 @@ export class SystemService {
 
   public getAutotune() {
     if (environment.production) {
-      return this.httpClient.get<any>('/api/system/autotune');
+      return this.httpClient.get<IAutotuneSettings>('/api/system/autotune');
     }
 
     // Mock data for development
