@@ -141,15 +141,6 @@ static esp_err_t resolve_stratum_address(const char *hostname, uint16_t port, st
     return ESP_OK;
 }
 
-bool is_wifi_connected() {
-    wifi_ap_record_t ap_info;
-    if (esp_wifi_sta_get_ap_info(&ap_info) == ESP_OK) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 void cleanQueue(GlobalState * GLOBAL_STATE) {
     ESP_LOGI(TAG, "Clean Jobs: clearing queue");
     GLOBAL_STATE->abandon_work = 1;
@@ -180,6 +171,7 @@ void stratum_close_connection(GlobalState * GLOBAL_STATE)
     ESP_LOGE(TAG, "Shutting down socket and restarting...");
     shutdown(GLOBAL_STATE->sock, SHUT_RDWR);
     close(GLOBAL_STATE->sock);
+    GLOBAL_STATE->sock = -1;
     cleanQueue(GLOBAL_STATE);
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 }
@@ -206,7 +198,7 @@ void stratum_primary_heartbeat(void * pvParameters)
 
         ESP_LOGD(TAG, "Running Heartbeat on: %s!", primary_stratum_url);
 
-        if (!is_wifi_connected()) {
+        if (!GLOBAL_STATE->SYSTEM_MODULE.is_connected) {
             ESP_LOGD(TAG, "Heartbeat. Failed WiFi check!");
             vTaskDelay(10000 / portTICK_PERIOD_MS);
             continue;
@@ -238,6 +230,10 @@ void stratum_primary_heartbeat(void * pvParameters)
         if (setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO , &tcp_timeout, sizeof(tcp_timeout)) != 0) {
             ESP_LOGE(TAG, "Fail to setsockopt SO_RCVTIMEO ");
         }
+
+        // Enable TCP keepalive for heartbeat socket
+        int keepalive = 1;
+        setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, &keepalive, sizeof(keepalive));
 
         int send_uid = 1;
         STRATUM_V1_subscribe(sock, send_uid++, GLOBAL_STATE->DEVICE_CONFIG.family.asic.name);
@@ -361,7 +357,7 @@ void stratum_task(void * pvParameters)
 
     ESP_LOGI(TAG, "Opening connection to pool: %s:%d", stratum_url, port);
     while (1) {
-        if (!is_wifi_connected()) {
+        if (!GLOBAL_STATE->SYSTEM_MODULE.is_connected) {
             ESP_LOGI(TAG, "WiFi disconnected, attempting to reconnect...");
             vTaskDelay(10000 / portTICK_PERIOD_MS);
             continue;
@@ -440,6 +436,25 @@ void stratum_task(void * pvParameters)
 
         if (setsockopt(GLOBAL_STATE->sock, SOL_SOCKET, SO_RCVTIMEO , &tcp_rcv_timeout, sizeof(tcp_rcv_timeout)) != 0) {
             ESP_LOGE(TAG, "Fail to setsockopt SO_RCVTIMEO ");
+        }
+
+        int keepalive = 1;
+        if (setsockopt(GLOBAL_STATE->sock, SOL_SOCKET, SO_KEEPALIVE, &keepalive, sizeof(keepalive)) != 0) {
+            ESP_LOGE(TAG, "Failed to enable TCP keepalive");
+        }
+
+        int keepidle = 15; // Start sending keepalive after 15 seconds of inactivity
+        int keepintvl = 5; // Send keepalive every 5 seconds
+        int keepcnt = 3;   // Close connection after 3 failed keepalives
+
+        if (setsockopt(GLOBAL_STATE->sock, IPPROTO_TCP, TCP_KEEPIDLE, &keepidle, sizeof(keepidle)) != 0) {
+            ESP_LOGE(TAG, "Failed to set TCP_KEEPIDLE");
+        }
+        if (setsockopt(GLOBAL_STATE->sock, IPPROTO_TCP, TCP_KEEPINTVL, &keepintvl, sizeof(keepintvl)) != 0) {
+            ESP_LOGE(TAG, "Failed to set TCP_KEEPINTVL");
+        }
+        if (setsockopt(GLOBAL_STATE->sock, IPPROTO_TCP, TCP_KEEPCNT, &keepcnt, sizeof(keepcnt)) != 0) {
+            ESP_LOGE(TAG, "Failed to set TCP_KEEPCNT");
         }
 
         // Store the resolved address family
