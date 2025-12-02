@@ -3,10 +3,10 @@ SRCS
     "utils.c"
     "mining.c"
     "stratum_api.c"
-
+                    
 INCLUDE_DIRS
     "include"
-    
+
 REQUIRES
     "json"
     "mbedtls"

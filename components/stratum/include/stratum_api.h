@@ -33,7 +33,6 @@ typedef enum
     DISABLED = 0,
     BUNDLED_CRT = 1,
     CUSTOM_CRT = 2,
-    SKIP_VERIFICATION = 3,
 } tls_mode;
 
 static const int  STRATUM_ID_CONFIGURE    = 1;
@@ -79,8 +78,6 @@ typedef struct {
 } RequestTiming;
 
 esp_transport_handle_t STRATUM_V1_transport_init(tls_mode tls, char * cert);
-
-void STRATUM_V1_reset_uid();
 
 void STRATUM_V1_initialize_buffer();
 

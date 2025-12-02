@@ -80,7 +80,6 @@ int _parse_stratum_subscribe_result_message(const char * result_json_str, char *
 
 esp_transport_handle_t STRATUM_V1_transport_init(tls_mode tls, char * cert)
 {
-    
     esp_transport_handle_t transport;
     // tls_transport
     if (tls == DISABLED)
@@ -113,7 +112,6 @@ esp_transport_handle_t STRATUM_V1_transport_init(tls_mode tls, char * cert)
     }
     return transport;
 }
-
 
 void STRATUM_V1_initialize_buffer()
 {
@@ -194,7 +192,7 @@ char * STRATUM_V1_receive_jsonrpc_line(esp_transport_handle_t transport)
                 }
                 return 0;
             }
-            
+
             realloc_json_buffer(nbytes);
             strncat(json_rpc_buffer, recv_buffer, nbytes);
         } while (!strstr(json_rpc_buffer, "\n"));

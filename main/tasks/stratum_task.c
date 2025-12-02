@@ -348,7 +348,7 @@ static void decode_mining_notification(GlobalState * GLOBAL_STATE, const mining_
 void stratum_task(void * pvParameters)
 {
     GlobalState * GLOBAL_STATE = (GlobalState *) pvParameters;
-    
+
     primary_stratum_url = GLOBAL_STATE->SYSTEM_MODULE.pool_url;
     primary_stratum_port = GLOBAL_STATE->SYSTEM_MODULE.pool_port;
     primary_stratum_tls = GLOBAL_STATE->SYSTEM_MODULE.pool_tls;
@@ -429,6 +429,7 @@ void stratum_task(void * pvParameters)
             vTaskDelay(5000 / portTICK_PERIOD_MS);
             continue;
         }
+        retry_critical_attempts = 0;
 
         ESP_LOGI(TAG, "Transport initialized, connecting to %s:%d", stratum_url, port);
         esp_err_t ret = esp_transport_connect(GLOBAL_STATE->transport, stratum_url, port, TRANSPORT_TIMEOUT_MS);
@@ -470,8 +471,8 @@ void stratum_task(void * pvParameters)
         char * password = GLOBAL_STATE->SYSTEM_MODULE.is_using_fallback ? GLOBAL_STATE->SYSTEM_MODULE.fallback_pool_pass : GLOBAL_STATE->SYSTEM_MODULE.pool_pass;
 
         int authorize_message_id = GLOBAL_STATE->send_uid++;
-        //mining.authorize - ID: 3
 
+        //mining.authorize - ID: 3
         STRATUM_V1_authorize(GLOBAL_STATE->transport, authorize_message_id, username, password);
         STRATUM_V1_stamp_tx(authorize_message_id);
 
