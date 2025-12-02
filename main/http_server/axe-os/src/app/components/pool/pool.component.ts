@@ -179,9 +179,9 @@ export class PoolComponent implements OnInit {
   /**
    * Handles certificate file selection and reads the file content
    * @param event File selection event
-   * @param formControlName Form control name ('stratumCert' or 'fallbackStratumCert')
+   * @param formControlName Form control name (e.g., 'stratumCert' or 'fallbackStratumCert')
    */
-  onCertFileSelected(event: Event, formControlName: 'stratumCert' | 'fallbackStratumCert'): void {
+  onCertFileSelected(event: Event, formControlName: string): void {
     const fileInput = event.target as HTMLInputElement;
     
     if (fileInput.files && fileInput.files.length > 0) {

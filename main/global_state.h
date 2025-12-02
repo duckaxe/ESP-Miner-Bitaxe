@@ -73,7 +73,7 @@ typedef struct
     char * pool_cert;
     char * fallback_pool_cert;
     bool is_using_fallback;
-    int pool_addr_family;
+    char pool_connection_info[64];
     bool overheat_mode;
     uint16_t power_fault;
     uint32_t lastClockSync;

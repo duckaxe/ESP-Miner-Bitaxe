@@ -69,7 +69,7 @@ export interface ISystemInfo {
     poolDifficulty: number,
     responseTime: number,
     isUsingFallbackStratum: boolean,
-    poolAddrFamily: number,
+    poolConnectionInfo: string,
     frequency: number,
     version: string,
     axeOSVersion: string,

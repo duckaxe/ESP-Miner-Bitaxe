@@ -191,7 +191,7 @@ void stratum_reset_uid(GlobalState * GLOBAL_STATE)
 void stratum_close_connection(GlobalState * GLOBAL_STATE)
 {
     ESP_LOGE(TAG, "Shutting down socket and restarting...");
-    STRATUM_V1_transport_close(GLOBAL_STATE->transport);
+    esp_transport_close(GLOBAL_STATE->transport);
     cleanQueue(GLOBAL_STATE);
     vTaskDelay(1000 / portTICK_PERIOD_MS);
 }
@@ -202,12 +202,6 @@ void stratum_primary_heartbeat(void * pvParameters)
 
     ESP_LOGI(TAG, "Starting heartbeat thread for primary pool: %s:%d", primary_stratum_url, primary_stratum_port);
     vTaskDelay(10000 / portTICK_PERIOD_MS);
-
-
-    struct timeval tcp_timeout = {
-        .tv_sec = 5,
-        .tv_usec = 0
-    };
 
     while (1)
     {
@@ -230,7 +224,6 @@ void stratum_primary_heartbeat(void * pvParameters)
             vTaskDelay(60000 / portTICK_PERIOD_MS);
             continue;
         }
-
        
         tls_mode tls = GLOBAL_STATE->SYSTEM_MODULE.pool_tls;
         char * cert = GLOBAL_STATE->SYSTEM_MODULE.pool_cert;
@@ -240,11 +233,12 @@ void stratum_primary_heartbeat(void * pvParameters)
             vTaskDelay(60000 / portTICK_PERIOD_MS);
             continue;
         }
-        esp_err_t err = STRATUM_V1_transport_connect(primary_stratum_url, primary_stratum_port, transport);
+
+        esp_err_t err = esp_transport_connect(transport, primary_stratum_url, primary_stratum_port, TRANSPORT_TIMEOUT_MS);
         if (err != ESP_OK) 
         {
             ESP_LOGD(TAG, "Heartbeat. Failed connect check: %s:%d (errno %d: %s)", primary_stratum_url, primary_stratum_port, err, strerror(err));
-            STRATUM_V1_transport_close(transport);
+            esp_transport_close(transport);
             vTaskDelay(60000 / portTICK_PERIOD_MS);
             continue;
         }
@@ -257,7 +251,7 @@ void stratum_primary_heartbeat(void * pvParameters)
         memset(recv_buffer, 0, BUFFER_SIZE);
         int bytes_received = esp_transport_read(transport, recv_buffer, BUFFER_SIZE - 1, TRANSPORT_TIMEOUT_MS); 
 
-        STRATUM_V1_transport_close(transport);
+        esp_transport_close(transport);
 
         if (bytes_received == -1)  {
             vTaskDelay(60000 / portTICK_PERIOD_MS);
@@ -437,19 +431,30 @@ void stratum_task(void * pvParameters)
         }
 
         ESP_LOGI(TAG, "Transport initialized, connecting to %s:%d", stratum_url, port);
-        esp_err_t ret = STRATUM_V1_transport_connect(stratum_url, port, GLOBAL_STATE->transport);
+        esp_err_t ret = esp_transport_connect(GLOBAL_STATE->transport, stratum_url, port, TRANSPORT_TIMEOUT_MS);
         if (ret != ESP_OK) {
             retry_attempts ++;
             ESP_LOGE(TAG, "Transport unable to connect to %s:%d (errno %d). Attempt: %d", stratum_url, port, ret, retry_attempts);
             // close the transport
-            STRATUM_V1_transport_close(GLOBAL_STATE->transport);
+            esp_transport_close(GLOBAL_STATE->transport);
             // instead of restarting, retry this every 5 seconds
             vTaskDelay(5000 / portTICK_PERIOD_MS);
             continue;
         }
 
-        // Store the resolved address family
-        GLOBAL_STATE->SYSTEM_MODULE.pool_addr_family = conn_info.addr_family;
+        const char* protocol = (conn_info.addr_family == AF_INET6) ? "IPv6" : "IPv4";
+        const char *tls_status;
+
+        switch (tls) {
+            case DISABLED:     tls_status = ""; break;
+            case BUNDLED_CRT:  tls_status = " (TLS)"; break;
+            case CUSTOM_CRT:   tls_status = " (TLS Cert)"; break;
+            default:           tls_status = ""; break;
+        }
+
+        snprintf(GLOBAL_STATE->SYSTEM_MODULE.pool_connection_info,
+                 sizeof(GLOBAL_STATE->SYSTEM_MODULE.pool_connection_info),
+                 "%s%s", protocol, tls_status);        
 
         stratum_reset_uid(GLOBAL_STATE);
         cleanQueue(GLOBAL_STATE);

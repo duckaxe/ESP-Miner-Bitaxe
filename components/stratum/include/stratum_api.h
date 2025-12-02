@@ -80,10 +80,6 @@ typedef struct {
 
 esp_transport_handle_t STRATUM_V1_transport_init(tls_mode tls, char * cert);
 
-esp_err_t STRATUM_V1_transport_connect(const char * host, int port, esp_transport_handle_t transport);
-
-esp_err_t STRATUM_V1_transport_close(esp_transport_handle_t transport);
-
 void STRATUM_V1_reset_uid();
 
 void STRATUM_V1_initialize_buffer();

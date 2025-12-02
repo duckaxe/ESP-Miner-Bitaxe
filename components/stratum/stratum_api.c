@@ -114,17 +114,6 @@ esp_transport_handle_t STRATUM_V1_transport_init(tls_mode tls, char * cert)
     return transport;
 }
 
-esp_err_t STRATUM_V1_transport_connect(const char * host, int port, esp_transport_handle_t transport)
-{
-    esp_err_t ret = esp_transport_connect(transport, host, port, TRANSPORT_TIMEOUT_MS);
-    return ret;
-}
-
-esp_err_t STRATUM_V1_transport_close(esp_transport_handle_t transport)
-{
-    esp_err_t ret = esp_transport_close(transport);
-    return ret;
-}
 
 void STRATUM_V1_initialize_buffer()
 {
@@ -469,7 +458,7 @@ int STRATUM_V1_extranonce_subscribe(esp_transport_handle_t transport, int send_u
     sprintf(extranonce_msg, "{\"id\": %d, \"method\": \"mining.extranonce.subscribe\", \"params\": []}\n", send_uid);
     debug_stratum_tx(extranonce_msg);
 
-    return esp_transport_write(transport, extranonce_msg, strlen(extranonce_msg));
+    return esp_transport_write(transport, extranonce_msg, strlen(extranonce_msg), TRANSPORT_TIMEOUT_MS);
 }
 
 int STRATUM_V1_authorize(esp_transport_handle_t transport, int send_uid, const char * username, const char * pass)
