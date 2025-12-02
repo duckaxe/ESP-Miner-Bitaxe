@@ -157,15 +157,28 @@ export class PoolComponent implements OnInit {
   public onUrlChange(poolType: PoolType) {
     const urlControl = this.form.get(`${poolType}URL`);
     const portControl = this.form.get(`${poolType}Port`);
-    if (!urlControl || !portControl) return;
+    const tlsControl = this.form.get(`${poolType}TLS`);
+    if (!urlControl || !portControl || !tlsControl) return;
 
     let urlValue = urlControl.value || '';
 
     if (!urlValue) return;
 
-    const prefix = 'stratum+tcp://';
-    if (urlValue.startsWith(prefix)) {
-      urlValue = urlValue.slice(prefix.length);
+    var tlsMode = 0;
+    const prefixTcp = 'stratum+tcp://';
+    if (urlValue.startsWith(prefixTcp)) {
+      urlValue = urlValue.slice(prefixTcp.length);
+    }
+
+    const prefixTls = 'stratum+tls://';
+    if (urlValue.startsWith(prefixTls)) {
+      urlValue = urlValue.slice(prefixTls.length);
+      tlsMode = 1;
+    }
+    const prefixSsl = 'stratum+ssl://';
+    if (urlValue.startsWith(prefixSsl)) {
+      urlValue = urlValue.slice(prefixSsl.length);
+      tlsMode = 1;
     }
 
     const { cleanUrl, port } = this.extractPort(urlValue);
@@ -174,6 +187,7 @@ export class PoolComponent implements OnInit {
       portControl.setValue(port);
     }
     urlControl.setValue(cleanUrl);
+    tlsControl.setValue(tlsMode);
   }
 
   /**
