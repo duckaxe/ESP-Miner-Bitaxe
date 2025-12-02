@@ -54,7 +54,7 @@
                             <input pInputText [id]="pool + 'SuggestedDifficulty'" [formControlName]="pool + 'SuggestedDifficulty'" type="number" />
                         </div>
                     </div>
-                    <div *ngIf="showAdvancedOptions[pool]" class="field-checkbox grid mb-0">
+                    <div *ngIf="showAdvancedOptions[pool]" class="field-checkbox grid">
                         <div class="col-1 md:col-10 md:flex-order-2">
                             <p-checkbox [name]="pool + 'ExtranonceSubscribe'" [inputId]="pool + 'ExtranonceSubscribe'" [formControlName]="pool + 'ExtranonceSubscribe'"
                                 [binary]="true"></p-checkbox>
@@ -68,26 +68,26 @@
                     </div>
 
                     <div *ngIf="showAdvancedOptions[pool]"  class="field grid p-fluid">
-                        <label [htmlFor]="pool + 'TLS'" class="col-12 mb-2 md:col-2 md:mb-0">Stratum TLS</label>
+                        <label [htmlFor]="pool + 'TLS'" class="col-12 mb-2 md:col-2 md:mb-0">Connection security</label>
                         <div class="col-12 md:col-10">
                             <div class="flex flex-wrap gap-3">
                                 <div class="field-radiobutton mb-0">
                                     <p-radioButton [name]="pool + 'TLS'" [value]="0" [formControlName]="pool + 'TLS'" [inputId]="pool + 'TLS_0'"></p-radioButton>
-                                    <label [for]="pool + 'TLS_0'" class="ml-2">Disable</label>
+                                    <label [for]="pool + 'TLS_0'" class="ml-2">No TLS</label>
                                 </div>
                                 <div class="field-radiobutton mb-0">
                                     <p-radioButton [name]="pool + 'TLS'" [value]="1" [formControlName]="pool + 'TLS'" [inputId]="pool + 'TLS_1'"></p-radioButton>
-                                    <label [for]="pool + 'TLS_1'" class="ml-2">Bundled CA</label>
+                                    <label [for]="pool + 'TLS_1'" class="ml-2">TLS (System certificates)</label>
                                 </div>
                                 <div class="field-radiobutton mb-0">
                                     <p-radioButton [name]="pool + 'TLS'" [value]="2" [formControlName]="pool + 'TLS'" [inputId]="pool + 'TLS_2'"></p-radioButton>
-                                    <label [for]="pool + 'TLS_2'" class="ml-2">Custom CA</label>
+                                    <label [for]="pool + 'TLS_2'" class="ml-2">TLS (Custom CA certificate)</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="showAdvancedOptions[pool] && form.get(pool + 'TLS')?.value === 2" class="field grid p-fluid">
-                        <label [htmlFor]="pool + 'Cert'" class="col-12 mb-2 md:col-2 md:mb-0">Stratum Certificate:</label>
+                    <div *ngIf="showAdvancedOptions[pool] && form.get(pool + 'TLS')?.value === 2" class="field grid p-fluid mb-0">
+                        <label [htmlFor]="pool + 'Cert'" class="col-12 mb-2 md:col-2 md:mb-0">Certificate</label>
                         <div class="col-12 md:col-10">
                             <div class="p-inputgroup">
                                 <textarea pInputTextarea [id]="pool + 'Cert'" [formControlName]="pool + 'Cert'" rows="5"
