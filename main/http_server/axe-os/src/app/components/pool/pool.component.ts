@@ -7,6 +7,11 @@ import { SystemService } from 'src/app/services/system.service';
 
 type PoolType = 'stratum' | 'fallbackStratum';
 
+interface ITlsOption {
+  value: number;
+  label: string;
+}
+
 @Component({
   selector: 'app-pool',
   templateUrl: './pool.component.html',
@@ -19,6 +24,12 @@ export class PoolComponent implements OnInit {
   public pools: PoolType[] = ['stratum', 'fallbackStratum'];
   public showPassword = { 'stratum': false, 'fallbackStratum': false };
   public showAdvancedOptions = { 'stratum': false, 'fallbackStratum': false };
+
+  public tlsOptions: ITlsOption[] = [
+    { value: 0, label: 'No TLS' },
+    { value: 1, label: 'TLS (System certificate)' },
+    { value: 2, label: 'TLS (Custom CA certificate)' }
+  ];
 
   @Input() uri = '';
 
@@ -160,25 +171,21 @@ export class PoolComponent implements OnInit {
     const tlsControl = this.form.get(`${poolType}TLS`);
     if (!urlControl || !portControl || !tlsControl) return;
 
-    let urlValue = urlControl.value || '';
+    let urlValue = urlControl.value.trim() || '';
 
     if (!urlValue) return;
 
-    var tlsMode = 0;
-    const prefixTcp = 'stratum+tcp://';
-    if (urlValue.startsWith(prefixTcp)) {
-      urlValue = urlValue.slice(prefixTcp.length);
-    }
+    const prefixes = [
+      { prefix: 'stratum+tcp://', tlsMode: false },
+      { prefix: 'stratum+tls://', tlsMode: true },
+      { prefix: 'stratum+ssl://', tlsMode: true }
+    ] as const;
 
-    const prefixTls = 'stratum+tls://';
-    if (urlValue.startsWith(prefixTls)) {
-      urlValue = urlValue.slice(prefixTls.length);
-      tlsMode = 1;
-    }
-    const prefixSsl = 'stratum+ssl://';
-    if (urlValue.startsWith(prefixSsl)) {
-      urlValue = urlValue.slice(prefixSsl.length);
-      tlsMode = 1;
+    let isTlsMode = false;
+    const matched = prefixes.find(({ prefix }) => urlValue.startsWith(prefix));
+    if (matched) {
+      urlValue = urlValue.slice(matched.prefix.length);
+      isTlsMode = matched.tlsMode;
     }
 
     const { cleanUrl, port } = this.extractPort(urlValue);
@@ -187,37 +194,32 @@ export class PoolComponent implements OnInit {
       portControl.setValue(port);
     }
     urlControl.setValue(cleanUrl);
-    tlsControl.setValue(tlsMode);
+    tlsControl.setValue(isTlsMode);
   }
 
-  /**
-   * Handles certificate file selection and reads the file content
-   * @param event File selection event
-   * @param formControlName Form control name (e.g., 'stratumCert' or 'fallbackStratumCert')
-   */
   onCertFileSelected(event: Event, formControlName: string): void {
     const fileInput = event.target as HTMLInputElement;
-    
+
     if (fileInput.files && fileInput.files.length > 0) {
       const file = fileInput.files[0];
       const reader = new FileReader();
-      
+
       reader.onload = () => {
         const fileContent = reader.result as string;
         // Update the corresponding certificate field in the form
         this.form.get(formControlName)?.setValue(fileContent);
         this.form.get(formControlName)?.markAsDirty();
-        
+
         // Reset file input so the same file can be selected again
         fileInput.value = '';
       };
-      
+
       reader.onerror = () => {
         // Error handling when reading the certificate file
-        this.toastr.error('Failed to read certificate file', 'Error');
+        this.toastr.error('Failed to read certificate file');
         fileInput.value = '';
       };
-      
+
       // Read the file as text
       reader.readAsText(file);
     }
@@ -226,9 +228,13 @@ export class PoolComponent implements OnInit {
   private pemCertificateValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value?.trim()) return null;
-      
+
       const pemRegex = /^-----BEGIN CERTIFICATE-----\s*([\s\S]*?)\s*-----END CERTIFICATE-----$/;
       return pemRegex.test(control.value?.trim()) ? null : { invalidCertificate: true };
     };
+  }
+
+  trackByFn(index: number, option: ITlsOption): number {
+    return option.value;
   }
 }
