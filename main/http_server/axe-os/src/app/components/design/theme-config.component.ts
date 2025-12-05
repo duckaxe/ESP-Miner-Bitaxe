@@ -85,7 +85,7 @@ export class ThemeConfigComponent implements OnInit {
         '--togglebutton-border': '1px solid #F7931A',
         '--togglebutton-hover-bg': '#e58617',
         '--togglebutton-hover-border': '1px solid #e58617',
-        '--togglebutton-text-color': '#ffffff',
+        '--togglebutton-text-color': '#ffffff'
       }
     },
     {
@@ -117,7 +117,7 @@ export class ThemeConfigComponent implements OnInit {
         '--togglebutton-border': '1px solid #F80421',
         '--togglebutton-hover-bg': '#e63c2e',
         '--togglebutton-hover-border': '1px solid #e63c2e',
-        '--togglebutton-text-color': '#ffffff',
+        '--togglebutton-text-color': '#ffffff'
       }
     },
     {
@@ -149,7 +149,7 @@ export class ThemeConfigComponent implements OnInit {
         '--togglebutton-border': '1px solid #2196f3',
         '--togglebutton-hover-bg': '#1e88e5',
         '--togglebutton-hover-border': '1px solid #1e88e5',
-        '--togglebutton-text-color': '#ffffff',
+        '--togglebutton-text-color': '#ffffff'
       }
     },
     {
@@ -181,7 +181,7 @@ export class ThemeConfigComponent implements OnInit {
         '--togglebutton-border': '1px solid #4caf50',
         '--togglebutton-hover-bg': '#43a047',
         '--togglebutton-hover-border': '1px solid #43a047',
-        '--togglebutton-text-color': '#ffffff',
+        '--togglebutton-text-color': '#ffffff'
       }
     },
     {
@@ -213,7 +213,7 @@ export class ThemeConfigComponent implements OnInit {
         '--togglebutton-border': '1px solid #b340fa',
         '--togglebutton-hover-bg': '#8e24aa',
         '--togglebutton-hover-border': '1px solid #8e24aa',
-        '--togglebutton-text-color': '#ffffff',
+        '--togglebutton-text-color': '#ffffff'
       }
     }
   ];
