@@ -86,11 +86,6 @@ export class ThemeConfigComponent implements OnInit {
         '--togglebutton-hover-bg': '#e58617',
         '--togglebutton-hover-border': '1px solid #e58617',
         '--togglebutton-text-color': '#ffffff',
-        // Radio Button
-        '--radiobutton-border': '#F7931A',
-        '--radiobutton-bg': '#F7931A',
-        '--radiobutton-hover-border': '#e58617',
-        '--radiobutton-focus-shadow': '0 0 0 1px #e58617',
       }
     },
     {
@@ -123,11 +118,6 @@ export class ThemeConfigComponent implements OnInit {
         '--togglebutton-hover-bg': '#e63c2e',
         '--togglebutton-hover-border': '1px solid #e63c2e',
         '--togglebutton-text-color': '#ffffff',
-        // Radio Button
-        '--radiobutton-border': '#F80421',
-        '--radiobutton-bg': '#F80421',
-        '--radiobutton-hover-border': '#e63c2e',
-        '--radiobutton-focus-shadow': '0 0 0 1px #e63c2e',
       }
     },
     {
@@ -160,11 +150,6 @@ export class ThemeConfigComponent implements OnInit {
         '--togglebutton-hover-bg': '#1e88e5',
         '--togglebutton-hover-border': '1px solid #1e88e5',
         '--togglebutton-text-color': '#ffffff',
-        // Radio Button
-        '--radiobutton-border': '#2196f3',
-        '--radiobutton-bg': '#2196f3',
-        '--radiobutton-hover-border': '#1e88e5',
-        '--radiobutton-focus-shadow': '0 0 0 1px #1e88e5',
       }
     },
     {
@@ -197,11 +182,6 @@ export class ThemeConfigComponent implements OnInit {
         '--togglebutton-hover-bg': '#43a047',
         '--togglebutton-hover-border': '1px solid #43a047',
         '--togglebutton-text-color': '#ffffff',
-        // Radio Button
-        '--radiobutton-border': '#4caf50',
-        '--radiobutton-bg': '#4caf50',
-        '--radiobutton-hover-border': '#43a047',
-        '--radiobutton-focus-shadow': '0 0 0 1px #43a047',
       }
     },
     {
@@ -234,11 +214,6 @@ export class ThemeConfigComponent implements OnInit {
         '--togglebutton-hover-bg': '#8e24aa',
         '--togglebutton-hover-border': '1px solid #8e24aa',
         '--togglebutton-text-color': '#ffffff',
-        // Radio Button
-        '--radiobutton-border': '#9c27b0',
-        '--radiobutton-bg': '#9c27b0',
-        '--radiobutton-hover-border': '#8e24aa',
-        '--radiobutton-focus-shadow': '0 0 0 1px #8e24aa',
       }
     }
   ];
