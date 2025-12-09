@@ -172,11 +172,11 @@ export class PoolComponent implements OnInit {
       { prefix: 'stratum+ssl://', tlsMode: true }
     ] as const;
 
-    let isTlsMode = false;
+    let isTlsMode = 0;
     const matched = prefixes.find(({ prefix }) => urlValue.startsWith(prefix));
     if (matched) {
       urlValue = urlValue.slice(matched.prefix.length);
-      isTlsMode = matched.tlsMode;
+      isTlsMode = +matched.tlsMode;
     }
 
     const { cleanUrl, port } = this.extractPort(urlValue);
