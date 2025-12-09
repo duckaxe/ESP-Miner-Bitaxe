@@ -227,10 +227,13 @@ export class PoolComponent implements OnInit {
 
   private pemCertificateValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (!control.value?.trim()) return null;
+      const value = control.value?.trim();
+      if (!value) return null;
 
-      const pemRegex = /^-----BEGIN CERTIFICATE-----\s*([\s\S]*?)\s*-----END CERTIFICATE-----$/;
-      return pemRegex.test(control.value?.trim()) ? null : { invalidCertificate: true };
+      const pemChainRegex =
+        /^(?:-----BEGIN CERTIFICATE-----[\s\S]*?-----END CERTIFICATE-----\s*)+$/;
+
+      return pemChainRegex.test(value) ? null : { invalidCertificate: true };
     };
   }
 
