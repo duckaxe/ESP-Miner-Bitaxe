@@ -130,7 +130,7 @@ In order to unlock the Input fields for ASIC Frequency and ASIC Core Voltage you
 
 ### Ethernet-over-USB Mode
 
-The Bitaxe supports Ethernet-over-USB (NCM) as an alternative to WiFi connectivity. See [ethernet-over-usb.md] for more details.
+The Bitaxe supports Ethernet-over-USB (NCM) as an alternative to WiFi connectivity. See [Ethernet-over-USB](ethernet-over-usb.md) for more details.
 
 ## Development
 
