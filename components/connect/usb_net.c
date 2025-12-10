@@ -142,19 +142,19 @@ void usb_net_init(void * pvParameters)
     char * hostname = nvs_config_get_string(NVS_CONFIG_HOSTNAME);
 
     // Build USB string descriptors
-    char *string_descriptors[4];
+    static char *string_descriptors[4];
     string_descriptors[0] = "\x09\x04"; // Language ID: English (US)
 
     string_descriptors[1] = "ESP-Miner"; // Manufacturer
 
-    char product_str[64];
+    static char product_str[64];
     snprintf(product_str, 64, "Bitaxe %s %s (%s)", GLOBAL_STATE->DEVICE_CONFIG.family.name, GLOBAL_STATE->DEVICE_CONFIG.board_version, hostname);
     string_descriptors[2] = product_str; // Product
 
     uint8_t mac[6];
     esp_efuse_mac_get_default(mac);
 
-    char serial_str[13];
+    static char serial_str[13];
     snprintf(serial_str, 13, "%02X%02X%02X%02X%02X%02X",
              mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     string_descriptors[3] = serial_str; // Serial
