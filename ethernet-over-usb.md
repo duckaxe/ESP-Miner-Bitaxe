@@ -64,15 +64,16 @@ sudo dnsmasq --interface=usb0 --dhcp-range=192.168.7.2,192.168.7.254 --no-daemon
 - **Device Class**: CDC NCM (Communications Device Class)
 - **USB Descriptors**:
   - Vendor ID: 0x303A (Espressif)
-  - Manufacturer: "Bitaxe"
-  - Product: "ESP-Miner USB NCM"
+  - Manufacturer: "ESP-Miner"
+  - Product: "Bitaxe [family] [model] ([hostname])"
+  - Serial: [MAC address]
 
 ## Limitations
 
 - The ESP32-S3 has a single USB port used for both flashing/logging and Ethernet-over-USB.
-- When Ethernet-over-USB is active, USB serial logging is unavailable on that port.
-- Use an ESP-PROG or UART adapter (GPIO43/44) for logging when in USB mode.
-- Flashing via bootloader mode still works normally.
+- When Ethernet-over-USB is active, USB serial logging is interrupted briefly when switching over from the ROM USB PHY to TinyUSB.
+- To flash the device, it first needs to be put in bootloader mode by holding the BOOT button and resetting the device.
+- Windows 10 may require manual driver installation for NCM support (see Windows 10 Setup section).
 
 ## Windows 10 Setup
 
