@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "display.h"
 #include "theme_api.h"
 
@@ -28,6 +29,9 @@
     #define FALLBACK_STRATUM_EXTRANONCE_SUBSCRIBE 0
 #endif
 
+#define FALLBACK_KEY_ASICFREQUENCY "asicfrequency" // Since v2.10.0 (https://github.com/bitaxeorg/ESP-Miner/pull/1051)
+#define FALLBACK_KEY_FANSPEED "fanspeed"           // Since v2.11.0 (https://github.com/bitaxeorg/ESP-Miner/pull/1331)
+
 typedef struct {
     NvsConfigKey key;
     ConfigType type;
@@ -41,7 +45,7 @@ static nvs_handle_t handle;
 
 static Settings settings[NVS_CONFIG_COUNT] = {
     [NVS_CONFIG_WIFI_SSID]                             = {.nvs_key_name = "wifissid",        .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_ESP_WIFI_SSID},                .rest_name = "ssid",                               .min = 1,  .max = 32},
-    [NVS_CONFIG_WIFI_PASS]                             = {.nvs_key_name = "wifipass",        .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_ESP_WIFI_PASSWORD},            .rest_name = "wifiPass",                           .min = 1,  .max = 63},
+    [NVS_CONFIG_WIFI_PASS]                             = {.nvs_key_name = "wifipass",        .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_ESP_WIFI_PASSWORD},            .rest_name = "wifiPass",                           .min = 0,  .max = 63},
     [NVS_CONFIG_HOSTNAME]                              = {.nvs_key_name = "hostname",        .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_LWIP_LOCAL_HOSTNAME},          .rest_name = "hostname",                           .min = 1,  .max = 32},
 
     [NVS_CONFIG_STRATUM_URL]                           = {.nvs_key_name = "stratumurl",      .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_STRATUM_URL},                  .rest_name = "stratumURL",                         .min = 0,  .max = NVS_STR_LIMIT},
@@ -50,26 +54,30 @@ static Settings settings[NVS_CONFIG_COUNT] = {
     [NVS_CONFIG_STRATUM_PASS]                          = {.nvs_key_name = "stratumpass",     .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_STRATUM_PW},                   .rest_name = "stratumPassword",                    .min = 0,  .max = NVS_STR_LIMIT},
     [NVS_CONFIG_STRATUM_DIFFICULTY]                    = {.nvs_key_name = "stratumdiff",     .type = TYPE_U16,   .default_value = {.u16 = CONFIG_STRATUM_DIFFICULTY},                   .rest_name = "stratumSuggestedDifficulty",         .min = 0,  .max = UINT16_MAX},
     [NVS_CONFIG_STRATUM_EXTRANONCE_SUBSCRIBE]          = {.nvs_key_name = "stratumxnsub",    .type = TYPE_BOOL,  .default_value = {.b   = (bool)STRATUM_EXTRANONCE_SUBSCRIBE},          .rest_name = "stratumExtranonceSubscribe",         .min = 0,  .max = 1},
+    [NVS_CONFIG_STRATUM_TLS]                           = {.nvs_key_name = "stratumtls",      .type = TYPE_U16,   .default_value = {.u16 = (uint16_t)CONFIG_STRATUM_TLS},                .rest_name = "stratumTLS",                         .min = 0,  .max = 3},
+    [NVS_CONFIG_STRATUM_CERT]                          = {.nvs_key_name = "stratumcert",     .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_STRATUM_CERT},                 .rest_name = "stratumCert",                        .min = 0,  .max = NVS_STR_LIMIT},
     [NVS_CONFIG_FALLBACK_STRATUM_URL]                  = {.nvs_key_name = "fbstratumurl",    .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_FALLBACK_STRATUM_URL},         .rest_name = "fallbackStratumURL",                 .min = 0,  .max = NVS_STR_LIMIT},
     [NVS_CONFIG_FALLBACK_STRATUM_PORT]                 = {.nvs_key_name = "fbstratumport",   .type = TYPE_U16,   .default_value = {.u16 = CONFIG_FALLBACK_STRATUM_PORT},                .rest_name = "fallbackStratumPort",                .min = 0,  .max = UINT16_MAX},
     [NVS_CONFIG_FALLBACK_STRATUM_USER]                 = {.nvs_key_name = "fbstratumuser",   .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_FALLBACK_STRATUM_USER},        .rest_name = "fallbackStratumUser",                .min = 0,  .max = NVS_STR_LIMIT},
     [NVS_CONFIG_FALLBACK_STRATUM_PASS]                 = {.nvs_key_name = "fbstratumpass",   .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_FALLBACK_STRATUM_PW},          .rest_name = "fallbackStratumPassword",            .min = 0,  .max = NVS_STR_LIMIT},
     [NVS_CONFIG_FALLBACK_STRATUM_DIFFICULTY]           = {.nvs_key_name = "fbstratumdiff",   .type = TYPE_U16,   .default_value = {.u16 = CONFIG_FALLBACK_STRATUM_DIFFICULTY},          .rest_name = "fallbackStratumSuggestedDifficulty", .min = 0,  .max = UINT16_MAX},
     [NVS_CONFIG_FALLBACK_STRATUM_EXTRANONCE_SUBSCRIBE] = {.nvs_key_name = "stratumfbxnsub",  .type = TYPE_BOOL,  .default_value = {.b   = (bool)FALLBACK_STRATUM_EXTRANONCE_SUBSCRIBE}, .rest_name = "fallbackStratumExtranonceSubscribe", .min = 0,  .max = 1},
+    [NVS_CONFIG_FALLBACK_STRATUM_TLS]                  = {.nvs_key_name = "fbstratumtls",    .type = TYPE_U16,   .default_value = {.u16 = (uint16_t)CONFIG_FALLBACK_STRATUM_TLS},       .rest_name = "fallbackStratumTLS",                 .min = 0,  .max = 3},
+    [NVS_CONFIG_FALLBACK_STRATUM_CERT]                 = {.nvs_key_name = "fbstratumcert",   .type = TYPE_STR,   .default_value = {.str = (char *)CONFIG_FALLBACK_STRATUM_CERT},        .rest_name = "fallbackStratumCert",                .min = 0,  .max = NVS_STR_LIMIT},
     [NVS_CONFIG_USE_FALLBACK_STRATUM]                  = {.nvs_key_name = "usefbstartum",    .type = TYPE_BOOL,                                                                         .rest_name = "useFallbackStratum",                 .min = 0,  .max = 1},
 
-    [NVS_CONFIG_ASIC_FREQUENCY]                        = {.nvs_key_name = "asicfrequency",   .type = TYPE_U16,   .default_value = {.u16 = CONFIG_ASIC_FREQUENCY}},
-    [NVS_CONFIG_ASIC_FREQUENCY_FLOAT]                  = {.nvs_key_name = "asicfrequency_f", .type = TYPE_FLOAT, .default_value = {.f   = -1},                                          .rest_name = "frequency",                          .min = 1,  .max = UINT16_MAX},
+    [NVS_CONFIG_ASIC_FREQUENCY]                        = {.nvs_key_name = "asicfrequency_f", .type = TYPE_FLOAT, .default_value = {.f   = CONFIG_ASIC_FREQUENCY},                       .rest_name = "frequency",                          .min = 1,  .max = UINT16_MAX},
     [NVS_CONFIG_ASIC_VOLTAGE]                          = {.nvs_key_name = "asicvoltage",     .type = TYPE_U16,   .default_value = {.u16 = CONFIG_ASIC_VOLTAGE},                         .rest_name = "coreVoltage",                        .min = 1,  .max = UINT16_MAX},
     [NVS_CONFIG_OVERCLOCK_ENABLED]                     = {.nvs_key_name = "oc_enabled",      .type = TYPE_BOOL,                                                                         .rest_name = "overclockEnabled",                   .min = 0,  .max = 1},
     
     [NVS_CONFIG_DISPLAY]                               = {.nvs_key_name = "display",         .type = TYPE_STR,   .default_value = {.str = DEFAULT_DISPLAY},                             .rest_name = "display",                            .min = 0,  .max = NVS_STR_LIMIT},
     [NVS_CONFIG_ROTATION]                              = {.nvs_key_name = "rotation",        .type = TYPE_U16,                                                                          .rest_name = "rotation",                           .min = 0,  .max = 270},
     [NVS_CONFIG_INVERT_SCREEN]                         = {.nvs_key_name = "invertscreen",    .type = TYPE_BOOL,                                                                         .rest_name = "invertscreen",                       .min = 0,  .max = 1},
+    [NVS_CONFIG_DISPLAY_OFFSET]                        = {.nvs_key_name = "displayOffset",   .type = TYPE_U16,   .default_value = {.u16 = LCD_SH1107_PARAM_DEFAULT_DISP_OFFSET },       .rest_name = "displayOffset",                      .min = 0,  .max = UINT8_MAX},
     [NVS_CONFIG_DISPLAY_TIMEOUT]                       = {.nvs_key_name = "displayTimeout",  .type = TYPE_I32,   .default_value = {.i32 = -1},                                          .rest_name = "displayTimeout",                     .min = -1, .max = UINT16_MAX},
 
     [NVS_CONFIG_AUTO_FAN_SPEED]                        = {.nvs_key_name = "autofanspeed",    .type = TYPE_BOOL,  .default_value = {.b   = true},                                        .rest_name = "autofanspeed",                       .min = 0,  .max = 1},
-    [NVS_CONFIG_FAN_SPEED]                             = {.nvs_key_name = "fanspeed",        .type = TYPE_U16,   .default_value = {.u16 = 100},                                         .rest_name = "fanspeed",                           .min = 0,  .max = 100},
+    [NVS_CONFIG_MANUAL_FAN_SPEED]                      = {.nvs_key_name = "manualfanspeed",  .type = TYPE_U16,   .default_value = {.u16 = 100},                                         .rest_name = "manualFanSpeed",                     .min = 0,  .max = 100},
     [NVS_CONFIG_MIN_FAN_SPEED]                         = {.nvs_key_name = "minfanspeed",     .type = TYPE_U16,   .default_value = {.u16 = 25},                                          .rest_name = "minFanSpeed",                        .min = 0,  .max = 99},
     [NVS_CONFIG_TEMP_TARGET]                           = {.nvs_key_name = "temptarget",      .type = TYPE_U16,   .default_value = {.u16 = 60},                                          .rest_name = "temptarget",                         .min = 35, .max = 66},
     [NVS_CONFIG_OVERHEAT_MODE]                         = {.nvs_key_name = "overheat_mode",   .type = TYPE_BOOL,                                                                         .rest_name = "overheat_mode",                      .min = 0,  .max = 0},
@@ -104,9 +112,47 @@ static Settings settings[NVS_CONFIG_COUNT] = {
 Settings *nvs_config_get_settings(NvsConfigKey key)
 {
     if (key < 0 || key >= NVS_CONFIG_COUNT) {
+        ESP_LOGE(TAG, "Invalid key enum %d", key);
         return NULL;
     }
     return &settings[key];
+}
+
+static void nvs_config_init_fallback(NvsConfigKey key, Settings * setting)
+{
+    esp_err_t ret;
+    if (key == NVS_CONFIG_ASIC_FREQUENCY) {
+        if (nvs_find_key(handle, setting->nvs_key_name, NULL) == ESP_ERR_NVS_NOT_FOUND) {
+            uint16_t val;
+            ret = nvs_get_u16(handle, FALLBACK_KEY_ASICFREQUENCY, &val);
+            if (ret == ESP_OK) {
+                ESP_LOGI(TAG, "Migrating NVS config %s to %s (%d)", FALLBACK_KEY_ASICFREQUENCY, setting->nvs_key_name, val);
+                char buf[32];
+                snprintf(buf, sizeof(buf), "%d", val);
+                nvs_set_str(handle, setting->nvs_key_name, buf);
+            }
+        }
+    }
+    if (key == NVS_CONFIG_MANUAL_FAN_SPEED) {
+        if (nvs_find_key(handle, setting->nvs_key_name, NULL) == ESP_ERR_NVS_NOT_FOUND) {
+            uint16_t val;
+            ret = nvs_get_u16(handle, FALLBACK_KEY_FANSPEED, &val);
+            if (ret == ESP_OK) {
+                ESP_LOGI(TAG, "Migrating NVS config %s to %s (%d)", FALLBACK_KEY_FANSPEED, setting->nvs_key_name, val);
+                nvs_set_u16(handle, setting->nvs_key_name, val);
+            }
+        }
+    }
+}
+
+static void nvs_config_apply_fallback(NvsConfigKey key, Settings * setting)
+{
+    if (key == NVS_CONFIG_ASIC_FREQUENCY) {
+        nvs_set_u16(handle, FALLBACK_KEY_ASICFREQUENCY, (uint16_t) setting->value.f);
+    }
+    if (key == NVS_CONFIG_MANUAL_FAN_SPEED) {
+        nvs_set_u16(handle, FALLBACK_KEY_FANSPEED, setting->value.u16);
+    }
 }
 
 static void nvs_task(void *pvParameters)
@@ -147,6 +193,9 @@ static void nvs_task(void *pvParameters)
                         ret = nvs_set_u16(handle, setting->nvs_key_name, setting->value.b ? 1 : 0);
                         break;
                 }
+
+                nvs_config_apply_fallback(update.key, setting);
+
                 if (ret == ESP_OK) {
                     ret = nvs_commit(handle);
                     if (ret != ESP_OK) {
@@ -177,8 +226,11 @@ esp_err_t nvs_config_init(void)
     }
 
     // Load all
-    for (NvsConfigKey i = 0; i < NVS_CONFIG_COUNT; i++) {
-        Settings *setting = &settings[i];
+    for (NvsConfigKey key = 0; key < NVS_CONFIG_COUNT; key++) {
+        Settings *setting = &settings[key];
+
+        nvs_config_init_fallback(key, setting);
+
         esp_err_t ret;
         switch (setting->type) {
             case TYPE_STR: {
@@ -246,6 +298,7 @@ char *nvs_config_get_string(NvsConfigKey key)
 {
     Settings *setting = nvs_config_get_settings(key);
     if (!setting || setting->type != TYPE_STR) {
+        ESP_LOGE(TAG, "Wrong type for %s (str)", setting->nvs_key_name);
         return NULL;
     }
     return strdup(setting->value.str);
@@ -253,6 +306,10 @@ char *nvs_config_get_string(NvsConfigKey key)
 
 void nvs_config_set_string(NvsConfigKey key, const char *value)
 {
+    Settings *setting = nvs_config_get_settings(key);
+    // Skip if invalid, wrong type, or value unchanged
+    if (!setting || setting->type != TYPE_STR || (setting->value.str && strcmp(setting->value.str, value) == 0)) return;
+
     ConfigUpdate update = { .key = key, .type = TYPE_STR, .value.str = strdup(value) };
     if (!update.value.str) return;
     xQueueSend(nvs_save_queue, &update, portMAX_DELAY);
@@ -262,6 +319,7 @@ uint16_t nvs_config_get_u16(NvsConfigKey key)
 {
     Settings *setting = nvs_config_get_settings(key);
     if (!setting || setting->type != TYPE_U16) {
+        ESP_LOGE(TAG, "Wrong type for %s (u16)", setting->nvs_key_name);
         return 0;
     }
     return setting->value.u16;
@@ -269,6 +327,9 @@ uint16_t nvs_config_get_u16(NvsConfigKey key)
 
 void nvs_config_set_u16(NvsConfigKey key, uint16_t value)
 {
+    Settings *setting = nvs_config_get_settings(key);
+    if (!setting || setting->type != TYPE_U16 || setting->value.u16 == value) return;
+
     ConfigUpdate update = { .key = key, .type = TYPE_U16, .value.u16 = value };
     xQueueSend(nvs_save_queue, &update, portMAX_DELAY);
 }
@@ -277,6 +338,7 @@ int32_t nvs_config_get_i32(NvsConfigKey key)
 {
     Settings *setting = nvs_config_get_settings(key);
     if (!setting || setting->type != TYPE_I32) {
+        ESP_LOGE(TAG, "Wrong type for %s (i32)", setting->nvs_key_name);
         return 0;
     }
     return setting->value.i32;
@@ -284,6 +346,9 @@ int32_t nvs_config_get_i32(NvsConfigKey key)
 
 void nvs_config_set_i32(NvsConfigKey key, int32_t value)
 {
+    Settings *setting = nvs_config_get_settings(key);
+    if (!setting || setting->type != TYPE_I32 || setting->value.i32 == value) return;
+
     ConfigUpdate update = { .key = key, .type = TYPE_I32, .value.i32 = value };
     xQueueSend(nvs_save_queue, &update, portMAX_DELAY);
 }
@@ -292,6 +357,7 @@ uint64_t nvs_config_get_u64(NvsConfigKey key)
 {
     Settings *setting = nvs_config_get_settings(key);
     if (!setting || setting->type != TYPE_U64) {
+        ESP_LOGE(TAG, "Wrong type for %s (u64)", setting->nvs_key_name);
         return 0;
     }
     return setting->value.u64;
@@ -299,6 +365,9 @@ uint64_t nvs_config_get_u64(NvsConfigKey key)
 
 void nvs_config_set_u64(NvsConfigKey key, uint64_t value)
 {
+    Settings *setting = nvs_config_get_settings(key);
+    if (!setting || setting->type != TYPE_U64 || setting->value.u64 == value) return;
+
     ConfigUpdate update = { .key = key, .type = TYPE_U64, .value.u64 = value };
     xQueueSend(nvs_save_queue, &update, portMAX_DELAY);
 }
@@ -307,6 +376,7 @@ float nvs_config_get_float(NvsConfigKey key)
 {
     Settings *setting = nvs_config_get_settings(key);
     if (!setting || setting->type != TYPE_FLOAT) {
+        ESP_LOGE(TAG, "Wrong type for %s (float)", setting->nvs_key_name);
         return 0;
     }
     return setting->value.f;
@@ -314,6 +384,10 @@ float nvs_config_get_float(NvsConfigKey key)
 
 void nvs_config_set_float(NvsConfigKey key, float value)
 {
+    Settings *setting = nvs_config_get_settings(key);
+    // Skip if invalid, wrong type, or value unchanged (use epsilon for float comparison)
+    if (!setting || setting->type != TYPE_FLOAT || fabsf(setting->value.f - value) < 0.001f) return;
+
     ConfigUpdate update = { .key = key, .type = TYPE_FLOAT, .value.f = value };
     xQueueSend(nvs_save_queue, &update, portMAX_DELAY);
 }
@@ -323,6 +397,7 @@ bool nvs_config_get_bool(NvsConfigKey key)
 {
     Settings *setting = nvs_config_get_settings(key);
     if (!setting || setting->type != TYPE_BOOL) {
+        ESP_LOGE(TAG, "Wrong type for %s (bool)", setting->nvs_key_name);
         return false;
     }
     return setting->value.b;
@@ -330,6 +405,9 @@ bool nvs_config_get_bool(NvsConfigKey key)
 
 void nvs_config_set_bool(NvsConfigKey key, bool value)
 {
+    Settings *setting = nvs_config_get_settings(key);
+    if (!setting || setting->type != TYPE_BOOL || setting->value.b == value) return;
+
     ConfigUpdate update = { .key = key, .type = TYPE_BOOL, .value.b = value };
     xQueueSend(nvs_save_queue, &update, portMAX_DELAY);
 }
